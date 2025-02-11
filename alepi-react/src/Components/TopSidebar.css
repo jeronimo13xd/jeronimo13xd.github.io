@@ -1,0 +1,424 @@
+/* ---------------- Diseño para Computadoras ---------------- */
+
+@media (min-width: 1025px) {
+  /* App.css */
+
+
+  .Arriba {
+
+    font-family: 'Playfair Display SC';
+
+  }
+
+  /* Cambiar el color de fondo del Navbar */
+  .bg-body-tertiary {
+    background-color: #003f7f !important;
+    /* Color de fondo personalizado */
+  }
+
+  .nav-link {
+    color: white;
+  }
+
+  .nav-link:hover {
+    color: #EFB810;
+  }
+
+  /* hipertexto de los */
+  .custom-nav .nav-link {
+    color: #ffffff;
+    /* Cambiar color del texto */
+    margin-right: 200px;
+    /* Añadir espacio entre los enlaces */
+    font-size: x-large;
+  }
+
+
+
+  .custom-nav .nav-link:hover {
+    background-color: #0056b3;
+    /* Cambiar color de fondo al pasar el ratón */
+    color: #ffffff;
+    /* Asegurar que el color del texto se mantenga */
+  }
+
+  /* Botón de la navbar que abre las sidebar */
+  .navbar-toggler {
+    border: 2px solid #13007d !important;
+    /* Cambiar el color del borde */
+    background-color: #dddddd !important;
+    /* Cambiar el color de fondo */
+    border-radius: 5px;
+    /* Bordes redondeados */
+    padding: 10px;
+    /* Padding personalizado */
+  }
+
+  /* Cambiar el color del texto del sidebar */
+  .navbar-brand,
+  .offcanvas-title {
+    color: #595959 !important;
+    /* Color del texto personalizado */
+  }
+
+  /* Cambiar el estilo del logo */
+  .navbar-brand img,
+  .offcanvas-title img {
+    height: 40px;
+    /* Altura del logo */
+    width: auto;
+    /* Ancho automático para mantener la proporción */
+  }
+
+  /* Cambiar el color del botón de búsqueda */
+  .btn-outline-success {
+    color: #ffffff !important;
+    /* Color del texto del botón */
+    background-color: #28a745 !important;
+    /* Color de fondo del botón */
+    border-color: #28a745 !important;
+    /* Color del borde del botón */
+  }
+
+  .btn-outline-success:hover {
+    color: #ffffff !important;
+    /* Color del texto del botón al pasar el ratón */
+    background-color: #218838 !important;
+    /* Color de fondo del botón al pasar el ratón */
+    border-color: #1e7e34 !important;
+    /* Color del borde del botón al pasar el ratón */
+  }
+
+  /* Cambiar el color del campo de búsqueda */
+  .form-control {
+    color: #ffffff !important;
+    /* Color del texto del campo */
+    background-color: #6c757d !important;
+    /* Color de fondo del campo */
+    border-color: #6c757d !important;
+    /* Color del borde del campo */
+  }
+
+  .form-control::placeholder {
+    color: #adb5bd !important;
+    /* Color del texto del placeholder */
+  }
+
+  /* Cambiar el color del dropdown */
+  .dropdown-item {
+    color: #000000 !important;
+    /* Color del texto del dropdown */
+  }
+
+  .dropdown-item:hover {
+    color: #ffffff !important;
+    /* Color del texto del dropdown al pasar el ratón */
+    background-color: #007bff !important;
+    /* Color de fondo del dropdown al pasar el ratón */
+  }
+
+  /* Cambiar el color del divisor del dropdown */
+  .dropdown-divider {
+    border-color: #343a40 !important;
+    /* Color del divisor del dropdown */
+  }
+
+  .offcanvas-header {
+    background-color: #003f7f;
+  }
+
+  .offcanvas-body {
+    background-color: #09438D;
+
+  }
+
+
+  .nav-icon {
+    width: 2em;
+    height: 2em;
+    margin-right: 10px;
+
+  }
+
+  .SobrePag {
+    align-items: center;
+    display: flex;
+    font-size: 1.3rem;
+    font-family: 'Playfair Display SC';
+    margin-bottom: 20px;
+
+  }
+
+  .InicSes {
+    align-items: center;
+    display: flex;
+    font-family: 'Playfair Display SC';
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+  }
+
+  .Susc {
+    align-items: center;
+    display: flex;
+    font-family: 'Playfair Display SC';
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+  }
+
+  .Info {
+    align-items: center;
+    display: flex;
+    font-family: 'Playfair Display SC';
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+  }
+
+  .pap {
+    font-family: 'Playfair Display SC';
+    font-size: 1.3rem;
+  }
+
+}
+
+/* ------------------------------------------------------ */
+
+/* ---------------- Diseño para tabletas ---------------- */
+
+@media (min-width: 601px) and (max-width: 1024px) {
+
+  /* Cambiar el color de fondo del Navbar */
+  .bg-body-tertiary {
+    background-color: #003f7f !important;
+    /* Color de fondo personalizado */
+  }
+
+  /* hipertexto de los */
+  .custom-nav .nav-link {
+    color: #ffffff;
+    /* Cambiar color del texto */
+    margin-right: 200px;
+    /* Añadir espacio entre los enlaces */
+    font-size: x-large;
+    display: none;
+  }
+
+  .custom-nav .nav-link:hover {
+    background-color: #0056b3;
+    /* Cambiar color de fondo al pasar el ratón */
+    color: #ffffff;
+    /* Asegurar que el color del texto se mantenga */
+  }
+
+  /* Botón de la navbar que abre las sidebar */
+  .navbar-toggler {
+    border: 2px solid #13007d !important;
+    /* Cambiar el color del borde */
+    background-color: #dddddd !important;
+    /* Cambiar el color de fondo */
+    border-radius: 5px;
+    /* Bordes redondeados */
+    padding: 10px;
+    /* Padding personalizado */
+  }
+
+  /* Cambiar el color del texto del sidebar */
+  .navbar-brand,
+  .offcanvas-title {
+    color: #595959 !important;
+    /* Color del texto personalizado */
+  }
+
+  /* Cambiar el estilo del logo */
+  .navbar-brand img,
+  .offcanvas-title img {
+    height: 40px;
+    /* Altura del logo */
+    width: auto;
+    /* Ancho automático para mantener la proporción */
+  }
+
+  /* Cambiar el color del botón de búsqueda */
+  .btn-outline-success {
+    color: #ffffff !important;
+    /* Color del texto del botón */
+    background-color: #28a745 !important;
+    /* Color de fondo del botón */
+    border-color: #28a745 !important;
+    /* Color del borde del botón */
+  }
+
+  .btn-outline-success:hover {
+    color: #ffffff !important;
+    /* Color del texto del botón al pasar el ratón */
+    background-color: #218838 !important;
+    /* Color de fondo del botón al pasar el ratón */
+    border-color: #1e7e34 !important;
+    /* Color del borde del botón al pasar el ratón */
+  }
+
+  /* Cambiar el color del campo de búsqueda */
+  .form-control {
+    color: #ffffff !important;
+    /* Color del texto del campo */
+    background-color: #6c757d !important;
+    /* Color de fondo del campo */
+    border-color: #6c757d !important;
+    /* Color del borde del campo */
+  }
+
+  .form-control::placeholder {
+    color: #adb5bd !important;
+    /* Color del texto del placeholder */
+  }
+
+  /* Cambiar el color del dropdown */
+  .dropdown-item {
+    color: #000000 !important;
+    /* Color del texto del dropdown */
+  }
+
+  .dropdown-item:hover {
+    color: #ffffff !important;
+    /* Color del texto del dropdown al pasar el ratón */
+    background-color: #007bff !important;
+    /* Color de fondo del dropdown al pasar el ratón */
+  }
+
+  /* Cambiar el color del divisor del dropdown */
+  .dropdown-divider {
+    border-color: #343a40 !important;
+    /* Color del divisor del dropdown */
+  }
+
+  .offcanvas-header {
+    background-color: #003f7f;
+  }
+
+  .offcanvas-body {
+    background-color: #ffffff;
+  }
+
+}
+
+/* ------------------------------------------------------ */
+
+
+/* ---------------- Diseño para Celulares (Contenido) ---------------- */
+
+@media (max-width: 600px) {
+
+  /* Cambiar el color de fondo del Navbar */
+  .bg-body-tertiary {
+    background-color: #003f7f !important;
+    /* Color de fondo personalizado */
+  }
+
+  /* hipertexto de los */
+  .custom-nav .nav-link {
+    color: #ffffff;
+    /* Cambiar color del texto */
+    margin-right: 200px;
+    /* Añadir espacio entre los enlaces */
+    font-size: x-large;
+    display: none;
+  }
+
+  .custom-nav .nav-link:hover {
+    background-color: #0056b3;
+    /* Cambiar color de fondo al pasar el ratón */
+    color: #ffffff;
+    /* Asegurar que el color del texto se mantenga */
+  }
+
+  /* Botón de la navbar que abre las sidebar */
+  .navbar-toggler {
+    border: 2px solid #13007d !important;
+    /* Cambiar el color del borde */
+    background-color: #dddddd !important;
+    /* Cambiar el color de fondo */
+    border-radius: 5px;
+    /* Bordes redondeados */
+    padding: 10px;
+    /* Padding personalizado */
+  }
+
+  /* Cambiar el color del texto del sidebar */
+  .navbar-brand,
+  .offcanvas-title {
+    color: #595959 !important;
+    /* Color del texto personalizado */
+  }
+
+  /* Cambiar el estilo del logo */
+  .navbar-brand img,
+  .offcanvas-title img {
+    height: 40px;
+    /* Altura del logo */
+    width: auto;
+    /* Ancho automático para mantener la proporción */
+  }
+
+  /* Cambiar el color del botón de búsqueda */
+  .btn-outline-success {
+    color: #ffffff !important;
+    /* Color del texto del botón */
+    background-color: #28a745 !important;
+    /* Color de fondo del botón */
+    border-color: #28a745 !important;
+    /* Color del borde del botón */
+  }
+
+  .btn-outline-success:hover {
+    color: #ffffff !important;
+    /* Color del texto del botón al pasar el ratón */
+    background-color: #218838 !important;
+    /* Color de fondo del botón al pasar el ratón */
+    border-color: #1e7e34 !important;
+    /* Color del borde del botón al pasar el ratón */
+  }
+
+  /* Cambiar el color del campo de búsqueda */
+  .form-control {
+    color: #ffffff !important;
+    /* Color del texto del campo */
+    background-color: #6c757d !important;
+    /* Color de fondo del campo */
+    border-color: #6c757d !important;
+    /* Color del borde del campo */
+  }
+
+  .form-control::placeholder {
+    color: #adb5bd !important;
+    /* Color del texto del placeholder */
+  }
+
+  /* Cambiar el color del dropdown */
+  .dropdown-item {
+    color: #000000 !important;
+    /* Color del texto del dropdown */
+  }
+
+  .dropdown-item:hover {
+    color: #ffffff !important;
+    /* Color del texto del dropdown al pasar el ratón */
+    background-color: #007bff !important;
+    /* Color de fondo del dropdown al pasar el ratón */
+  }
+
+  /* Cambiar el color del divisor del dropdown */
+  .dropdown-divider {
+    border-color: #343a40 !important;
+    /* Color del divisor del dropdown */
+  }
+
+  .offcanvas-header {
+    background-color: #003f7f;
+  }
+
+  .offcanvas-body {
+    background-color: #ffffff;
+  }
+
+}
+
+/* ------------------------------------------------------ */
