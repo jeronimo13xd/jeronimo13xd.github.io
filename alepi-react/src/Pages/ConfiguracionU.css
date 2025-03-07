@@ -1,0 +1,20 @@
+.config-container {
+    max-width: 800px;
+}
+
+.config-card {
+    width: 100%;
+    background-color: #09438D;
+}
+
+.config-tabs .nav-link {
+    color: #;
+}
+
+.config-tabs .nav-link.active {
+    background-color: #007bff;
+}
+
+.card-body {
+    color: black;
+}

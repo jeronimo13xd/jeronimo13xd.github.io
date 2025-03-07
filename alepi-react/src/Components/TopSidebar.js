@@ -24,7 +24,7 @@ const Topbar = () => {
         </Navbar.Brand>
 
         <Nav className="Arriba mx-auto custom-nav d-flex flex-row align-items-center">
-          <Nav.Link href="#directorio">Directorio</Nav.Link>
+          <Nav.Link href="/">Directorio</Nav.Link>
           <Nav.Link href="/Articulos">Artículos</Nav.Link>
           <Nav.Link href="/Videos">Videos</Nav.Link>
         </Nav>
@@ -71,14 +71,29 @@ const Topbar = () => {
                       Mi Perfil
                     </Link>
                   </div>
-                  <div className="Articulos">
-                    <Link to="/Articulos" className="nav-link">
+                  <div className="Notificaciones">
+                    <Link to="/Notificaciones" className="nav-link">
+                      Notificaciones
+                    </Link>
+                  </div>
+                  <div className="ArticulosU">
+                    <Link to="/ArticulosU" className="nav-link">
                       Artículos
                     </Link>
                   </div>
                   <div className="Videos">
-                    <Link to="/Videos" className="nav-link">
+                    <Link to="/VideosU" className="nav-link">
                       Videos
+                    </Link>
+                  </div>
+                  <div className="SobrePagina">
+                    <Link to="/Info" className="nav-link">
+                      Sobre la página
+                    </Link>
+                  </div>
+                  <div className="Configuracion">
+                    <Link to="/ConfiguracionU" className="nav-link">
+                      Configuración
                     </Link>
                   </div>
                   <div className="logout">

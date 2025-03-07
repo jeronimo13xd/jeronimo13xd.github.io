@@ -14,7 +14,12 @@ import Info from './Components/Info';
 import Principal from './Components/Principal';
 import Suscripcion from './Pages/Suscripcion';
 import Perfil from './Pages/Perfil';
+import Notificaciones from './Pages/Notificaciones';
+import ArticulosU from './Pages/ArticulosU';
+import ConfiguracionU from './Pages/ConfiguracionU';
 import './App.css';
+import VideosU from './Pages/VideosU';
+import Directorio from './Pages/Directorio';
 
 const App = () => {
   return (
@@ -34,6 +39,11 @@ const App = () => {
               <Route path="/Info" element={<Info />} />
               <Route path="/Suscripcion" element={<Suscripcion />} />
               <Route path="/Perfil" element={<Perfil />} />
+              <Route path="/Notificaciones" element={<Notificaciones />} />
+              <Route path="/ArticulosU" element={<ArticulosU />} />
+              <Route path="/VideosU" element={<VideosU />} />
+              <Route path="/ConfiguracionU" element={<ConfiguracionU />} />
+              <Route path="/Directorio" element={<Directorio />} />
             </Routes>
             <Footer />
           </div>

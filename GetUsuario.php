@@ -37,12 +37,13 @@ if (!$idUsuario) {
 }
 
 try {
-    // Consulta SQL
+    // Consulta SQL (MODIFICADA PARA INCLUIR TELÉFONO)
     $sql = "SELECT 
                 u.Nombre AS nombre, 
                 u.Correo AS correo, 
                 p.ApellidoP AS apellidoPaterno, 
                 p.ApellidoM AS apellidoMaterno,
+                p.Telefono AS telefono,  
                 p.CedulaProfesional AS cedulaProfesional, 
                 p.UniversidadEgreso AS universidad, 
                 p.Idiomas AS idiomas, 
@@ -66,7 +67,6 @@ try {
         $usuario = $result->fetch_assoc();
 
         // Decodificar JSON si es necesario
-        // (si en tu BD 'Idiomas' o 'Certificaciones' guardas cadenas JSON)
         $usuario['idiomas'] = json_decode($usuario['idiomas'] ?? '[]');
         $usuario['certificaciones'] = json_decode($usuario['certificaciones'] ?? '[]');
 

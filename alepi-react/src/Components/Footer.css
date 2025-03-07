@@ -1,72 +1,79 @@
-  /* Estilos para el Footer */
+/* Estilos para el Footer */
+.footer {
+  background-color: #3C3C3C !important;
+  color: #ffffff !important;
+  padding: 40px 20px;
+  width: 100%;
+  position: relative;
+  margin-top: 0;
+  /* Asegurar que no haya espacio arriba */
+  z-index: 10;
+}
 
+/* Evitar cualquier superposición de fondo blanco */
+.footer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #3C3C3C;
+  z-index: -1;
+}
+
+/* Corregir el espaciado del contenedor */
+.container-fluid {
+  padding: 0;
+  margin: 0;
+}
+
+/* Asegurar que los textos sean blancos */
+.footer h5,
+.footer p,
+.footer a {
+  color: #ffffff !important;
+}
+
+/* Logo */
+.logoFooter {
+  height: 60px;
+}
+
+/* Enlaces */
+.acerca,
+.footer a {
+  color: #bbb;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.acerca:hover,
+.footer a:hover {
+  color: #fff;
+}
+
+/* Iconos de redes */
+.redes-iconos {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.redes-iconos img {
+  width: 30px;
+  height: 30px;
+  transition: transform 0.3s;
+}
+
+.redes-iconos img:hover {
+  transform: scale(1.1);
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
   .footer {
-    background-color: #3C3C3C;
-    /* Color de fondo del footer */
-    color: #ffffff;
-    /* Texto blanco */
-    padding: 40px 20px;
-    width: 100%;
-    position: relative;
-    margin-top: 5%;
-
+    flex-direction: column;
+    text-align: center;
   }
-
-  .footer h5 {
-    color: #ffffff;
-    font-family: 'Playfair Display SC', serif;
-    margin-bottom: 15px;
-  }
-
-  .LogoFooter {
-    margin-top: 30%;
-    margin-left: -40%;
-  }
-
-  .footer-seccion {
-    margin-bottom: 20px;
-  }
-
-  .acerca,
-  .footer a {
-    color: #bbb;
-    text-decoration: none;
-    transition: color 0.3s;
-  }
-
-  .acerca:hover,
-  .footer a:hover {
-    color: #fff;
-    /* Cambiar a blanco al pasar el cursor */
-  }
-
-  .redes-iconos {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    margin-top: 10px;
-  }
-
-  .redes-iconos img {
-    width: 30px;
-    height: 30px;
-    transition: transform 0.3s;
-  }
-
-  .redes-iconos img:hover {
-    transform: scale(1.1);
-    /* Aumentar tamaño al pasar el cursor */
-  }
-
-  /* Responsividad para pantallas más pequeñas */
-  @media (max-width: 768px) {
-
-    .footer .col-md-3,
-    .footer .col-md-2 {
-      margin-bottom: 1.5rem;
-    }
-
-    .footer h5 {
-      font-size: 16px;
-    }
-  }
+}

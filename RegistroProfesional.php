@@ -42,13 +42,20 @@ $conn->autocommit(FALSE);
 
 try {
     // Insertar en la tabla Profesionales
-    $sqlProfesional = "INSERT INTO Profesionales (ID_Usuario, Nombre, ApellidoM, ApellidoP, FechaNac, CedulaProfesional, UniversidadEgreso, ExperienciaLaboral, Honorarios, Ubicacion, ID_Especialidad, ID_Profesion, Idiomas) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $sqlProfesional = "INSERT INTO Profesionales (ID_Usuario, Nombre, ApellidoM, ApellidoP, FechaNac, Telefono, CedulaProfesional, UniversidadEgreso, ExperienciaLaboral, Honorarios, Ubicacion, ID_Especialidad, ID_Profesion, Idiomas) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmtProfesional = $conn->prepare($sqlProfesional);
+
+    if (!$stmtProfesional) {
+        throw new Exception("Error al preparar la consulta: " . $conn->error);
+    }
+
+    // Asignar valores a las variables
     $idUsuario = $data['idUsuario'];
     $nombre = $data['nombre'];
     $apellidoP = $data['apellidoPaterno'];
     $apellidoM = $data['apellidoMaterno'];
     $fechaNac = "{$data['ano']}-{$data['mes']}-{$data['dia']}";
+    $telefono = $data['telefono'] ?? NULL; // Asegúrate de que 'telefono' esté en los datos recibidos
     $cedulaProfesional = $data['cedulaProfesional'] ?? NULL;
     $universidadEgreso = $data['universidad'];
     $experienciaLaboral = $data['experienciaLaboral'] ?? NULL;
@@ -59,12 +66,13 @@ try {
 
     // Vincular parámetros e insertar en la tabla
     $stmtProfesional->bind_param(
-        "issssssssssis",
+        "issssssssssiss",
         $idUsuario,
         $nombre,
         $apellidoM,
         $apellidoP,
         $fechaNac,
+        $telefono, // Asegúrate de incluir el campo Telefono
         $cedulaProfesional,
         $universidadEgreso,
         $experienciaLaboral,
@@ -74,7 +82,10 @@ try {
         $idProfesion,
         $idiomas
     );
-    $stmtProfesional->execute();
+
+    if (!$stmtProfesional->execute()) {
+        throw new Exception("Error al ejecutar la consulta: " . $stmtProfesional->error);
+    }
 
     // Confirmar transacción
     $conn->commit();
@@ -83,6 +94,9 @@ try {
     $conn->rollback(); // Revertir cambios en caso de error
     echo json_encode(["status" => "error", "message" => $e->getMessage()]);
 } finally {
-    $stmtProfesional->close();
+    // Cerrar la declaración y la conexión
+    if (isset($stmtProfesional)) {
+        $stmtProfesional->close();
+    }
     $conn->close();
 }
