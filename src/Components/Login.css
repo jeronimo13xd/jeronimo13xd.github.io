@@ -1,0 +1,60 @@
+/*----------------------Computadoras--------------------------------------- */
+@media (min-width: 1025px) {
+
+    /* Login.css */
+    .input-white {
+        background-color: white !important;
+        /* Asegura que el fondo sea blanco */
+        color: black;
+        /* Color del texto */
+        border: 1px solid #ced4da;
+        /* Color del borde (puedes ajustarlo) */
+    }
+
+    .login-form {
+
+        margin-top: 3%;
+        margin-left: 30%;
+        margin-right: 30%;
+        background-color: #3C3C3C;
+
+    }
+
+
+
+    .contorno {
+
+        padding-top: 0.5%;
+        padding-bottom: 2%;
+        margin-right: 20%;
+        margin-left: 20%;
+        border-radius: 10px;
+        background-color: #09438D;
+        margin-bottom: 3%;
+        margin-top: 2%;
+
+    }
+
+
+
+    .textoLogin {
+        color: rgb(255, 255, 255);
+    }
+
+    .input-white {
+        color: black !important;
+        /* Establece el color del texto en negro */
+        background-color: white !important;
+        /* Establece el fondo en blanco */
+        border-color: #007bff !important;
+        /* Establece el color del borde (puedes ajustarlo) */
+    }
+
+    .Logs {
+        margin-left: 32%;
+        margin-right: 50%;
+        margin-bottom: 10%;
+    }
+
+
+}

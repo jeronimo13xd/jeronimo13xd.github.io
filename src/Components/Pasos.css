@@ -1,0 +1,122 @@
+ /* Para todos los campos de entrada, select y textarea */
+ form input.form-control,
+ form select.form-control,
+ form textarea.form-control {
+     background-color: #ffffff !important;
+     /* Fuerza el fondo blanco */
+     color: #000000 !important;
+     /* Fuerza el texto negro */
+     border: 1px solid #ced4da !important;
+     /* Asegura un borde estándar */
+ }
+
+ /* Para los placeholders */
+ form input.form-control::placeholder,
+ form textarea.form-control::placeholder {
+     color: #000000 !important;
+     /* Fuerza el placeholder negro */
+     opacity: 1 !important;
+     /* Asegura la visibilidad */
+ }
+
+ /* Al enfocar el campo */
+ form input.form-control:focus,
+ form select.form-control:focus,
+ form textarea.form-control:focus {
+     border-color: #007bff !important;
+     /* Cambia el borde al enfocar */
+     outline: none !important;
+     /* Elimina el borde azul por defecto */
+     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5) !important;
+     /* Sombra azul */
+ }
+
+ .contenedorAzul {
+
+     background-color: #003366;
+     color: white;
+     padding: 2%;
+     border-radius: 8px;
+     max-width: 100%;
+     margin-left: 10px;
+     margin-right: 10px;
+
+
+
+ }
+
+ .importante {
+     background-color: #d9534f;
+     /* Fondo rojo */
+     color: #ffffff;
+     /* Texto blanco */
+     padding: 2%;
+     /* Espaciado interno */
+     border-radius: 10px;
+     /* Bordes redondeados */
+     text-align: center;
+     /* Centrar texto */
+     margin: 20px auto;
+     /* Separación con otros elementos y centrado */
+     max-width: 99%;
+     /* Ancho máximo */
+     font-family: Arial, sans-serif;
+     /* Fuente simple */
+ }
+
+ .importante h2 {
+     font-size: 24px;
+     /* Tamaño del título */
+     font-weight: bold;
+     /* Negrita */
+     color: #ffc107;
+     /* Color amarillo */
+     margin-bottom: 10px;
+     /* Separación con el texto */
+ }
+
+ .importante p {
+     font-size: 16px;
+     /* Tamaño del texto */
+     margin: 0;
+     /* Sin margen extra */
+ }
+
+ .importante .footer {
+     margin-top: 10px;
+     /* Separación con el texto principal */
+     font-size: 14px;
+     /* Tamaño más pequeño */
+ }
+
+ .containerReg {
+
+     background-color: #ffffff;
+     border-radius: 10px;
+     max-width: 99%;
+     padding: 2%;
+
+     .font-weight-bold {
+         color: #000000;
+     }
+
+     h5 {
+         color: black;
+     }
+
+     h4 {
+         color: black;
+     }
+
+     label {
+         color: #000000;
+     }
+
+     p {
+         color: #000000;
+     }
+
+     li {
+         color: #000000;
+     }
+ }

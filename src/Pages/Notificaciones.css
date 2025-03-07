@@ -1,0 +1,76 @@
+/* Contenedor principal centrado */
+.notificaciones-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #082032;
+    padding: 20px;
+}
+
+/* Tarjeta más grande y espaciosa */
+.notificaciones-card {
+    width: 60%;
+    max-width: 700px;
+    background-color: #0a3d62;
+    color: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.3);
+    text-align: center;
+}
+
+/* Encabezado con icono */
+.notificaciones-header {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    border-bottom: 2px solid white;
+    padding-bottom: 10px;
+}
+
+/* Contenedor de notificaciones */
+.notificaciones-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Estilo de cada notificación */
+.notificacion {
+    background-color: #1e5f74;
+    padding: 15px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 18px;
+    transition: 0.3s ease-in-out;
+}
+
+/* Efecto al pasar el cursor */
+.notificacion:hover {
+    background-color: #246b85;
+}
+
+/* Botón de eliminar */
+.notificacion button {
+    background: none;
+    border: none;
+    color: #ff4d4d;
+    font-size: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* Efecto hover del botón */
+.notificacion button:hover {
+    color: #ff1a1a;
+}
+
+/* Mensaje de lista vacía */
+.notificaciones-empty {
+    color: #b2bec3;
+    font-style: italic;
+    font-size: 18px;
+}
