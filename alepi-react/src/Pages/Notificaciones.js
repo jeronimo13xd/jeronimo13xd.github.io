@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "./Notificaciones.css"; // Importamos el archivo de estilos
+import "./Notificaciones.css";
 
 const Notificaciones = () => {
     const [notifications, setNotifications] = useState([
@@ -13,10 +13,11 @@ const Notificaciones = () => {
     };
 
     return (
-        <div className="notificaciones-container">
-            <div className="notificaciones-card">
+        <div className="notificaciones-background">
+            <div className="notificaciones-container">
                 <h2 className="notificaciones-header">📢 Notificaciones</h2>
-                <div className="notificaciones-content">
+                <hr />
+                <div className="notificaciones-list">
                     {notifications.length === 0 ? (
                         <p className="notificaciones-empty">No hay notificaciones nuevas.</p>
                     ) : (

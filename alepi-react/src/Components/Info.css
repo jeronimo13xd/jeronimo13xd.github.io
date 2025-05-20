@@ -2,7 +2,6 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
-    /* Espacio entre las secciones principales */
     max-width: 1200px;
     margin: auto;
     padding: 20px;
@@ -27,6 +26,7 @@
     display: flex;
     justify-content: space-between;
     gap: 20px;
+    flex-wrap: wrap;
 }
 
 .about-video,
@@ -35,6 +35,7 @@
     background-color: #004488;
     padding: 15px;
     border-radius: 8px;
+    min-width: 280px;
 }
 
 .about-video h2,
@@ -49,7 +50,7 @@
     justify-content: center;
     background-color: #ffffff;
     border-radius: 8px;
-    height: 150px;
+    overflow: hidden;
 }
 
 .transcription p {
@@ -57,47 +58,144 @@
     color: #000000;
     padding: 15px;
     border-radius: 8px;
+    font-size: 14px;
 }
 
 .plans-section {
     display: flex;
     justify-content: space-between;
     gap: 20px;
+    flex-wrap: wrap;
 }
 
-.plan {
-    flex: 1;
+/* Tarjetas de planes */
+.plan-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
     padding: 20px;
-    border-radius: 8px;
-    text-align: center;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    width: 100%;
+    max-width: 45%;
 }
 
-.basic {
+.plan-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.plan-image {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 15px;
+}
+
+.plan-card h3 {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: inherit;
+}
+
+.plan-card ul {
+    list-style: none;
+    padding: 0;
+    color: inherit;
+}
+
+.plan-card li {
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+/* Colores para las tarjetas */
+.plan-card.basic {
     background-color: #ffffff;
     color: #000000;
 }
 
-.simple {
-    background-color: #004488;
-    color: #ffffff;
-}
-
-.premium {
+.plan-card.premium {
     background-color: #FFD700;
     color: #000000;
 }
 
-.plan h3 {
-    font-size: 20px;
+.responsive-video {
+    position: relative;
+    padding-bottom: 56.25%;
+    /* 16:9 aspect ratio */
+    height: 0;
+    overflow: hidden;
+    width: 100%;
+    border-radius: 12px;
+}
+
+.responsive-video iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 12px;
+}
+
+.plan-content {
+    width: 100%;
+    text-align: center;
+}
+
+.plan-image-wide {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
     margin-bottom: 15px;
 }
 
-.plan ul {
-    list-style-type: none;
-    padding: 0;
+.plan-card {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    width: 100%;
+    max-width: 48%;
+    overflow: hidden;
+    background-color: #fff;
 }
 
-.plan li {
-    font-size: 14px;
-    margin-bottom: 10px;
+.plan-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+}
+
+.plan-card h3 {
+    font-size: 28px;
+    margin: 10px 0;
+    color: inherit;
+}
+
+.plan-card ul {
+    list-style: none;
+    padding: 0;
+    color: inherit;
+    margin-bottom: 15px;
+}
+
+.plan-card li {
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+/* Estilos individuales */
+.plan-card.basic {
+    background-color: #f3f3f3;
+    color: #000000;
+}
+
+.plan-card.premium {
+    background-color: #fff8dc;
+    color: #000000;
 }

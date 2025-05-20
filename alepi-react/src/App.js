@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import AuthProvider from './Components/AuthContext'; // Proveedor de autenticación
-import { UserProvider } from './Pages/ContextoUsuario'; // Proveedor de usuario
+import AuthProvider from './Components/AuthContext';
+import { UserProvider } from './Pages/ContextoUsuario';
 import Topbar from './Components/TopSidebar';
 import Footer from './Components/Footer';
 import Login from './Components/Login';
@@ -17,34 +17,37 @@ import Perfil from './Pages/Perfil';
 import Notificaciones from './Pages/Notificaciones';
 import ArticulosU from './Pages/ArticulosU';
 import ConfiguracionU from './Pages/ConfiguracionU';
-import './App.css';
 import VideosU from './Pages/VideosU';
 import Directorio from './Pages/Directorio';
+import './App.css';
 
 const App = () => {
   return (
     <Router>
-      <AuthProvider>  {/* Mueve AuthProvider dentro de Router */}
+      <AuthProvider>
         <UserProvider>
-          <div className="App">
+          {/* 🧱 Layout con estructura sticky */}
+          <div className="app-wrapper">
             <Topbar />
-            <Routes>
-              <Route path="/" element={<Principal />} />
-              <Route path="/Login" element={<Login />} />
-              <Route path="/Acerca" element={<Acerca />} />
-              <Route path="/AvisoPriv" element={<AvisoPriv />} />
-              <Route path="/PregFrec" element={<PregFrec />} />
-              <Route path="/Videos" element={<Videos />} />
-              <Route path="/Articulos" element={<Articulos />} />
-              <Route path="/Info" element={<Info />} />
-              <Route path="/Suscripcion" element={<Suscripcion />} />
-              <Route path="/Perfil" element={<Perfil />} />
-              <Route path="/Notificaciones" element={<Notificaciones />} />
-              <Route path="/ArticulosU" element={<ArticulosU />} />
-              <Route path="/VideosU" element={<VideosU />} />
-              <Route path="/ConfiguracionU" element={<ConfiguracionU />} />
-              <Route path="/Directorio" element={<Directorio />} />
-            </Routes>
+            <div className="main-content">
+              <Routes>
+                <Route path="/" element={<Principal />} />
+                <Route path="/Login" element={<Login />} />
+                <Route path="/Acerca" element={<Acerca />} />
+                <Route path="/AvisoPriv" element={<AvisoPriv />} />
+                <Route path="/PregFrec" element={<PregFrec />} />
+                <Route path="/Videos" element={<Videos />} />
+                <Route path="/Articulos" element={<Articulos />} />
+                <Route path="/Info" element={<Info />} />
+                <Route path="/Suscripcion" element={<Suscripcion />} />
+                <Route path="/Perfil" element={<Perfil />} />
+                <Route path="/Notificaciones" element={<Notificaciones />} />
+                <Route path="/ArticulosU" element={<ArticulosU />} />
+                <Route path="/VideosU" element={<VideosU />} />
+                <Route path="/ConfiguracionU" element={<ConfiguracionU />} />
+                <Route path="/Directorio" element={<Directorio />} />
+              </Routes>
+            </div>
             <Footer />
           </div>
         </UserProvider>

@@ -93,4 +93,3 @@ const Paso5 = ({ prevStep, handleSubmit, datos }) => {
 };
 
 export default Paso5;
-

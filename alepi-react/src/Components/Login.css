@@ -1,60 +1,102 @@
-/*----------------------Computadoras--------------------------------------- */
-@media (min-width: 1025px) {
+/* Estilos base (Mobile First) */
+.login-form {
+    width: 90%;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background-color: #3C3C3C;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
 
-    /* Login.css */
-    .input-white {
-        background-color: white !important;
-        /* Asegura que el fondo sea blanco */
-        color: black;
-        /* Color del texto */
-        border: 1px solid #ced4da;
-        /* Color del borde (puedes ajustarlo) */
-    }
+.contorno {
+    padding: 1rem;
+    margin: 1rem;
+    border-radius: 10px;
+    background-color: #09438D;
+}
 
+.Logs {
+    width: 60%;
+    max-width: 200px;
+    margin: 0 auto 2rem;
+    display: block;
+}
+
+.textoLogin {
+    color: white;
+    font-size: 0.9rem;
+}
+
+.input-white {
+    background-color: white !important;
+    color: black !important;
+    border: 1px solid #ced4da !important;
+}
+
+.custom-button {
+    font-size: 1rem;
+    padding: 0.5rem;
+}
+
+/* Tablet (≥768px) */
+@media (min-width: 768px) {
     .login-form {
-
-        margin-top: 3%;
-        margin-left: 30%;
-        margin-right: 30%;
-        background-color: #3C3C3C;
-
+        width: 70%;
+        padding: 2rem;
     }
-
-
 
     .contorno {
-
-        padding-top: 0.5%;
-        padding-bottom: 2%;
-        margin-right: 20%;
-        margin-left: 20%;
-        border-radius: 10px;
-        background-color: #09438D;
-        margin-bottom: 3%;
-        margin-top: 2%;
-
-    }
-
-
-
-    .textoLogin {
-        color: rgb(255, 255, 255);
-    }
-
-    .input-white {
-        color: black !important;
-        /* Establece el color del texto en negro */
-        background-color: white !important;
-        /* Establece el fondo en blanco */
-        border-color: #007bff !important;
-        /* Establece el color del borde (puedes ajustarlo) */
+        margin: 2rem 10%;
+        padding: 2rem;
     }
 
     .Logs {
-        margin-left: 32%;
-        margin-right: 50%;
-        margin-bottom: 10%;
+        width: 50%;
+        max-width: 250px;
     }
 
+    .textoLogin {
+        font-size: 1rem;
+    }
 
+    .custom-button {
+        font-size: 1.1rem;
+        padding: 0.75rem;
+    }
+}
+
+/* Computadoras (≥1024px) */
+@media (min-width: 1024px) {
+    .login-form {
+        width: 40%;
+        margin: 3% auto;
+        padding: 2.5rem;
+    }
+
+    .contorno {
+        margin: 2% 20%;
+        padding: 2% 0;
+    }
+
+    .Logs {
+        width: 40%;
+        max-width: 300px;
+        margin-bottom: 5%;
+    }
+
+    .textoLogin {
+        font-size: 1.1rem;
+    }
+
+    .custom-button {
+        font-size: 1.2rem;
+        padding: 1rem;
+    }
+}
+
+/* Pantallas muy grandes (≥1200px) */
+@media (min-width: 1200px) {
+    .login-form {
+        max-width: 500px;
+    }
 }

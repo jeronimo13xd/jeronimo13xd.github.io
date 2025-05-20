@@ -1,76 +1,258 @@
-.directorio {
-    width: 80%;
-    max-width: 900px;
-    margin: 20px auto;
-    font-family: Arial, sans-serif;
+/* Estilos generales */
+.directorio-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 20px;
+    background-color: #002147;
+    /* Azul oscuro de fondo */
+    border-radius: 10px;
+    max-width: 1000px;
+    margin: auto;
+    width: 90%;
 }
 
-.professional-card {
+/* Tarjeta de profesional */
+.directorio-card {
     display: flex;
     align-items: center;
-    background-color: #0C3B63;
-    color: white;
+    background-color: #003366;
+    /* Azul más claro para las tarjetas */
     padding: 15px;
-    border-bottom: 2px solid gray;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    color: white;
+    font-family: 'Arial', sans-serif;
+    border: 2px solid #0055A4;
+    /* Borde azul más claro */
+    transition: transform 0.2s ease-in-out;
 }
 
-.profile-img {
-    width: 80px;
-    height: 80px;
+/* Efecto hover */
+.directorio-card:hover {
+    transform: scale(1.02);
+}
+
+/* Imagen del profesional */
+.directorio-img {
+    width: 100px;
+    height: 100px;
+    border-radius: 8px;
     object-fit: cover;
-    border-radius: 5px;
+    margin-right: 15px;
     border: 2px solid white;
+    transition: transform 0.3s ease-in-out;
 }
 
-.info {
-    flex: 1;
-    margin-left: 15px;
+/* Efecto hover en la imagen */
+.directorio-img:hover {
+    transform: scale(1.1);
 }
 
-.name {
-    font-size: 18px;
-    font-weight: bold;
-}
-
-.specialty {
-    font-size: 16px;
-    font-weight: bold;
-}
-
-.contact-buttons {
+/* Contenedor de información */
+.directorio-info {
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
     gap: 5px;
 }
 
-.email-btn,
-.whatsapp-btn {
-    padding: 5px 10px;
-    border: none;
-    cursor: pointer;
-    font-size: 14px;
-    border-radius: 5px;
+.directorio-name {
+    font-size: 20px;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 3px;
 }
 
-.email-btn {
+.directorio-specialty {
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #f0f0f0;
+}
+
+/* Botones de contacto */
+.directorio-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-right: 15px;
+}
+
+.directorio-buttons button {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
     background-color: white;
     color: black;
+    border: 1px solid #ccc;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    width: 220px;
+    font-weight: bold;
+    box-shadow: inset 0px 0px 3px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease-in-out;
 }
 
-.whatsapp-btn {
-    background-color: green;
+/* Efecto hover en botones */
+.directorio-buttons button:hover {
+    background-color: #0055A4;
     color: white;
 }
 
-.rating {
-    margin-left: 15px;
+.directorio-buttons button img {
+    width: 18px;
+    height: 18px;
 }
 
-.star {
+/* Rating - estrellas */
+.directorio-rating {
+    display: flex;
+    align-items: center;
     font-size: 22px;
+}
+
+.directorio-star {
     color: gray;
 }
 
-.star.filled {
-    color: yellow;
+.directorio-star.filled {
+    color: gold;
+}
+
+/* ─── RESPONSIVIDAD ─── */
+
+/* Para pantallas medianas (tablets) */
+@media (max-width: 768px) {
+    .directorio-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .directorio-img {
+        margin-right: 0;
+        margin-bottom: 10px;
+        width: 90px;
+        height: 90px;
+    }
+
+    .directorio-buttons {
+        flex-direction: row;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-right: 0;
+    }
+
+    .directorio-buttons button {
+        width: auto;
+        font-size: 12px;
+        padding: 8px;
+    }
+
+    .directorio-rating {
+        font-size: 20px;
+    }
+}
+
+/* Para pantallas pequeñas (móviles) */
+@media (max-width: 480px) {
+    .directorio-container {
+        padding: 10px;
+    }
+
+    .directorio-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 15px;
+    }
+
+    .directorio-img {
+        width: 80px;
+        height: 80px;
+        margin-bottom: 10px;
+    }
+
+    .directorio-name {
+        font-size: 18px;
+    }
+
+    .directorio-specialty {
+        font-size: 14px;
+    }
+
+    .directorio-buttons {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .directorio-buttons button {
+        width: 180px;
+        font-size: 12px;
+    }
+
+    .directorio-rating {
+        font-size: 18px;
+    }
+}
+
+.directorio-buscador {
+    max-width: 1000px;
+    width: 90%;
+    margin: 30px auto 10px auto;
+    text-align: center;
+    background-color: #003366;
+}
+
+.directorio-buscador input {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.buscador-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    background-color: #003366;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.buscador-container select,
+.buscador-container input {
+    padding: 10px;
+    border-radius: 6px;
+    border: none;
+    font-size: 14px;
+    width: 200px;
+}
+
+.buscador-container button {
+    background-color: #FFD700;
+    color: black;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.buscador-container button:hover {
+    background-color: #e6c200;
 }

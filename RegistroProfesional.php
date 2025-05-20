@@ -1,102 +1,68 @@
 <?php
-// Mostrar errores para depuración
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+/* ───────────────────── CONFIG ───────────────────── */
+error_reporting(E_ALL);  ini_set('display_errors',1);
+header("Access-Control-Allow-Origin:*");
+header("Access-Control-Allow-Methods:POST");
+header("Access-Control-Allow-Headers:Content-Type");
 
-// Permitir solicitudes desde cualquier origen (CORS)
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: POST");
-header("Access-Control-Allow-Headers: Content-Type");
-
-// Información de conexión a la base de datos
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "alepi2";
-
-// Crear conexión
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Verificar la conexión
-if ($conn->connect_error) {
-    die(json_encode(["status" => "error", "message" => "Error de conexión: " . $conn->connect_error]));
+$db = new mysqli('localhost','root','','alepi2');
+if ($db->connect_errno) {
+  http_response_code(500);
+  echo json_encode(["status"=>"error","message"=>"Conexión fallida"]);
+  exit;
 }
 
-// Leer los datos recibidos
-$data = json_decode(file_get_contents("php://input"), true);
-
-// Validar los datos recibidos
-if (empty($data['idUsuario']) || empty($data['profesion']) || empty($data['idiomas'])) {
-    echo json_encode(["status" => "error", "message" => "Los campos idUsuario, profesion e idiomas son obligatorios."]);
-    exit;
+/* ─────────── LEE Y DECODIFICA EL JSON DEL FRONT ─────────── */
+$body = json_decode(file_get_contents('php://input'), true);
+if (!$body) {
+  echo json_encode(["status"=>"error","message"=>"JSON mal formado"]);
+  exit;
 }
 
-// Validar los idiomas
-if (!isset($data['idiomas']) || !is_array($data['idiomas'])) {
-    $data['idiomas'] = [];
+/* ─────────── VALIDACIÓN OBLIGATORIA ─────────── */
+$idUsuario = trim($body['idUsuario'] ?? '');
+$profesion = trim($body['profesion'] ?? '');
+$idiomas   = $body['idiomas']        ?? [];
+
+if ($idUsuario==='' || $profesion==='' || !is_array($idiomas) || !count($idiomas)) {
+  echo json_encode(["status"=>"error",
+                    "message"=>"Los campos idUsuario, profesion e idiomas son obligatorios."]);
+  exit;
 }
-$idiomas = json_encode($data['idiomas']);
 
-// Desactivar autocommit para manejar transacciones
-$conn->autocommit(FALSE);
+/* ─────────── PREPARA LOS DEMÁS CAMPOS (opcionales) ─────────── */
+$idiomasJson  = json_encode($idiomas, JSON_UNESCAPED_UNICODE);
+$nombre       = $body['nombre']            ?? '';
+$apellidoP    = $body['apellidoPaterno']   ?? '';
+$apellidoM    = $body['apellidoMaterno']   ?? '';
+$fechaNac     = sprintf('%04d-%02d-%02d',
+                        $body['ano']??2000,$body['mes']??1,$body['dia']??1);
+$telefono     = $body['telefono']          ?? '';
+$cedula       = $body['cedulaProfesional'] ?? '';
+$universidad  = $body['universidad']       ?? '';
+$experiencia  = $body['experienciaLaboral']?? '';
+$honorarios   = $body['montoAsesoria']     ?? '';
+$ubicacion    = ($body['alcaldia']??'').', '.($body['estado']??'');
+$especialidad = $body['especialidades']    ?? null;
 
-try {
-    // Insertar en la tabla Profesionales
-    $sqlProfesional = "INSERT INTO Profesionales (ID_Usuario, Nombre, ApellidoM, ApellidoP, FechaNac, Telefono, CedulaProfesional, UniversidadEgreso, ExperienciaLaboral, Honorarios, Ubicacion, ID_Especialidad, ID_Profesion, Idiomas) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    $stmtProfesional = $conn->prepare($sqlProfesional);
+/* ─────────── INSERCIÓN ─────────── */
+$sql = "INSERT INTO Profesionales
+(ID_Usuario,Nombre,ApellidoM,ApellidoP,FechaNac,Telefono,CedulaProfesional,
+ UniversidadEgreso,ExperienciaLaboral,Honorarios,Ubicacion,
+ ID_Especialidad,ID_Profesion,Idiomas)
+VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
-    if (!$stmtProfesional) {
-        throw new Exception("Error al preparar la consulta: " . $conn->error);
-    }
+$st = $db->prepare($sql);
+$st->bind_param(
+  "issssssssssiss",
+  $idUsuario,$nombre,$apellidoM,$apellidoP,$fechaNac,$telefono,$cedula,
+  $universidad,$experiencia,$honorarios,$ubicacion,$especialidad,$profesion,$idiomasJson
+);
 
-    // Asignar valores a las variables
-    $idUsuario = $data['idUsuario'];
-    $nombre = $data['nombre'];
-    $apellidoP = $data['apellidoPaterno'];
-    $apellidoM = $data['apellidoMaterno'];
-    $fechaNac = "{$data['ano']}-{$data['mes']}-{$data['dia']}";
-    $telefono = $data['telefono'] ?? NULL; // Asegúrate de que 'telefono' esté en los datos recibidos
-    $cedulaProfesional = $data['cedulaProfesional'] ?? NULL;
-    $universidadEgreso = $data['universidad'];
-    $experienciaLaboral = $data['experienciaLaboral'] ?? NULL;
-    $honorarios = $data['montoAsesoria'] ?? NULL;
-    $ubicacion = "{$data['alcaldia']}, {$data['estado']}";
-    $idEspecialidad = $data['especialidades'] ?? NULL;
-    $idProfesion = $data['profesion'];
-
-    // Vincular parámetros e insertar en la tabla
-    $stmtProfesional->bind_param(
-        "issssssssssiss",
-        $idUsuario,
-        $nombre,
-        $apellidoM,
-        $apellidoP,
-        $fechaNac,
-        $telefono, // Asegúrate de incluir el campo Telefono
-        $cedulaProfesional,
-        $universidadEgreso,
-        $experienciaLaboral,
-        $honorarios,
-        $ubicacion,
-        $idEspecialidad,
-        $idProfesion,
-        $idiomas
-    );
-
-    if (!$stmtProfesional->execute()) {
-        throw new Exception("Error al ejecutar la consulta: " . $stmtProfesional->error);
-    }
-
-    // Confirmar transacción
-    $conn->commit();
-    echo json_encode(["status" => "success", "message" => "Registro profesional completado con éxito."]);
-} catch (Exception $e) {
-    $conn->rollback(); // Revertir cambios en caso de error
-    echo json_encode(["status" => "error", "message" => $e->getMessage()]);
-} finally {
-    // Cerrar la declaración y la conexión
-    if (isset($stmtProfesional)) {
-        $stmtProfesional->close();
-    }
-    $conn->close();
+if (!$st->execute()) {
+  http_response_code(500);
+  echo json_encode(["status"=>"error","message"=>"Error SQL: ".$st->error]);
+  exit;
 }
+
+echo json_encode(["status"=>"success","message"=>"Registro guardado"]);

@@ -1,85 +1,178 @@
-.professionals-container {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+:root {
+    --primary-color: #003366;
+    --secondary-color: #0055A4;
+    --accent-color: #FFA500;
+    --light-color: #ffffff;
+    --dark-color: #001f3f;
+    --border-radius: 8px;
+    --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --text-light: #f0f0f0;
+    --text-dark: #333333;
+}
+
+/* Contenedor principal exclusivo para la parte central */
+.principal-container {
+    max-width: 1200px;
+    margin: 20px auto;
     padding: 20px;
-    background-color: #003366;
-    color: white;
-    max-width: 1000px;
-    margin: auto;
+    background: var(--primary-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    color: var(--light-color);
+    font-family: Arial, sans-serif;
 }
 
-.professional-card {
+/* Sección de búsqueda */
+.principal-search {
     display: flex;
-    align-items: center;
-    background-color: #004488;
-    border-radius: 8px;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.ps-option,
+.ps-search-btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.ps-option {
+    background: var(--light-color);
+    color: var(--primary-color);
+}
+
+.ps-option:hover {
+    background: var(--accent-color);
+    color: var(--light-color);
+}
+
+.ps-search-btn {
+    background: var(--accent-color);
+    color: var(--light-color);
+}
+
+.ps-search-btn:hover {
+    background: #e69500;
+}
+
+/* Contenido central en dos columnas */
+.principal-content {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+/* Columna de profesionales */
+.ps-professionals {
+    flex: 1 1 300px;
+    background: var(--secondary-color);
     padding: 15px;
+    border-radius: var(--border-radius);
 }
 
-.professional-info {
-    display: flex;
-    flex: 2;
-    align-items: center;
-}
-
-.professional-photo {
-    margin-right: 15px;
-}
-
-.professional-photo img {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    object-fit: cover;
-}
-
-.professional-details h3 {
+.ps-title {
+    margin: 0 0 15px 0;
     font-size: 20px;
-    margin: 0;
+    border-bottom: 2px solid var(--accent-color);
+    padding-bottom: 5px;
 }
 
-.professional-details p {
-    margin: 5px 0 0;
-    font-size: 16px;
-}
-
-.professional-contact {
-    flex: 3;
+.ps-list {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
-.contact-button {
+.ps-card {
     display: flex;
     align-items: center;
-    text-decoration: none;
-    color: #000;
-    background-color: #ffffff;
-    padding: 8px 12px;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
+    background: var(--primary-color);
+    padding: 10px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
 }
 
-.contact-button:hover {
-    background-color: #f0f0f0;
+.ps-img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: var(--border-radius);
+    margin-right: 10px;
+    border: 2px solid var(--light-color);
 }
 
-.contact-button img {
-    width: 20px;
-    height: 20px;
-    margin-right: 8px;
+.ps-info h3 {
+    margin: 0;
+    font-size: 16px;
+    color: var(--light-color);
 }
 
-.professional-rating {
-    flex: 1;
+.ps-info p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--text-light);
+}
+
+/* Columna de Artículo y Video */
+.ps-articles-videos {
+    flex: 1 1 300px;
     display: flex;
-    justify-content: flex-end;
-    gap: 5px;
+    flex-direction: column;
+    gap: 20px;
 }
 
-.rating-star {
-    width: 25px;
-    height: 25px;
+.ps-article,
+.ps-video {
+    background: var(--light-color);
+    color: var(--primary-color);
+    padding: 15px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+}
+
+.ps-article .ps-title,
+.ps-video .ps-title {
+    color: var(--primary-color);
+}
+
+.ps-author {
+    font-size: 14px;
+    margin: 5px 0;
+}
+
+.ps-excerpt {
+    font-size: 14px;
+    color: var(--text-dark);
+}
+
+.ps-video-placeholder {
+    background: var(--dark-color);
+    color: var(--light-color);
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--border-radius);
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+    .principal-content {
+        flex-direction: column;
+    }
+
+    .ps-img {
+        width: 70px;
+        height: 70px;
+    }
+
+    .ps-info h3 {
+        font-size: 1rem;
+    }
 }

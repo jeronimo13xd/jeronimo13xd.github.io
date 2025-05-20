@@ -1,80 +1,149 @@
-.container {
+/* Fondo general azul marino oscuro, centrado y angosto */
+.articulos-wrapper {
+    background-color: #001f3f;
     display: flex;
-    gap: 20px;
-    padding: 20px;
-    background-color: #f4f4f4;
+    justify-content: center;
+    padding: 40px 100px;
+    min-height: 100vh;
+    margin-left: 100px;
+    margin-right: 100px;
+    border-radius: 10px;
 }
 
-.form-container {
-    width: 30%;
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.form-container h2 {
-    margin-bottom: 15px;
-}
-
-.form-container input,
-.form-container textarea {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-.form-container button {
-    background: #007bff;
+.articulos-container {
+    background-color: #003366;
     color: white;
-    border: none;
+    padding: 30px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 800px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+}
+
+/* ===== Formulario de nuevo artículo ===== */
+.formulario-articulo {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.formulario-articulo h2 {
+    text-align: center;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+}
+
+.formulario-articulo input,
+.formulario-articulo textarea {
     padding: 10px;
-    cursor: pointer;
-    width: 100%;
-    border-radius: 5px;
-}
-
-.articles-container {
-    width: 65%;
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.article {
-    display: flex;
-    gap: 15px;
-    border-bottom: 1px solid #ddd;
-    padding: 15px 0;
-}
-
-.article img {
-    width: 100px;
-    height: auto;
-    border-radius: 5px;
-}
-
-.article-content {
-    flex-grow: 1;
-}
-
-.article-content h3 {
-    margin: 0 0 5px;
-}
-
-.article-content p {
-    margin: 5px 0;
-    color: #555;
-}
-
-.read-more {
-    background: #007bff;
-    color: white;
+    border-radius: 6px;
     border: none;
-    padding: 8px;
+    font-size: 1rem;
+    background-color: #f4f4f4;
+    color: #000;
+}
+
+.formulario-articulo input[type="file"] {
+    background-color: transparent;
+    color: white;
+}
+
+.formulario-articulo label {
+    margin-top: 0.5rem;
+    font-weight: bold;
+}
+
+.formulario-articulo button {
+    background-color: #FFD700;
+    color: black;
+    padding: 10px;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
     cursor: pointer;
-    border-radius: 5px;
+    transition: background-color 0.2s ease;
+}
+
+.formulario-articulo button:hover {
+    background-color: #e6c200;
+}
+
+/* ===== Artículos subidos ===== */
+.articulos-listado {
+    margin-top: 3rem;
+}
+
+.articulos-listado h3 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    border-bottom: 2px solid #FFD700;
+    padding-bottom: 10px;
+}
+
+.articulo-card {
+    background-color: #0055A4;
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem;
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.articulo-card img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid white;
+}
+
+.articulo-info {
+    flex: 1;
+}
+
+.articulo-info h4 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.articulo-info p {
+    margin-bottom: 5px;
+}
+
+.articulo-info button {
+    margin-top: 0.8rem;
+    background-color: orange;
+    border: none;
+    color: black;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.articulo-info button:hover {
+    background-color: darkorange;
+}
+
+/* ===== Responsive Design ===== */
+@media (max-width: 768px) {
+    .articulo-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .articulo-card img {
+        width: 90px;
+        height: 90px;
+    }
+
+    .formulario-articulo input,
+    .formulario-articulo textarea {
+        font-size: 0.95rem;
+    }
 }

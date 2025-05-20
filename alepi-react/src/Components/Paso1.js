@@ -2,13 +2,13 @@ import React from 'react';
 import './Pasos.css';
 import { Link } from 'react-router-dom';
 import './Footer.css'
-import logo from 'C:/xampp/htdocs/alepirea/alepi-react/src/assets/logo.svg';
-import linkedinIcon from 'C:/xampp/htdocs/alepirea/alepi-react/src/assets/Linkedin.svg';
-import youtubeIcon from 'C:/xampp/htdocs/alepirea/alepi-react/src/assets/youtube.svg';
-import facebookIcon from 'C:/xampp/htdocs/alepirea/alepi-react/src/assets/facebook.svg';
-import tiktokIcon from 'C:/xampp/htdocs/alepirea/alepi-react/src/assets/tiktok.svg';
-import xIcon from 'C:/xampp/htdocs/alepirea/alepi-react/src/assets/x.svg'
-import instagramIcon from 'C:/xampp/htdocs/alepirea/alepi-react/src/assets/insta.svg'
+import logo from '../assets/logo.svg';
+import linkedinIcon from '../assets/Linkedin.svg';
+import youtubeIcon from '../assets/youtube.svg';
+import facebookIcon from '../assets/facebook.svg';
+import tiktokIcon from '../assets/tiktok.svg';
+import xIcon from '../assets/x.svg'
+import instagramIcon from '../assets/insta.svg'
 
 const Paso1 = ({ nextStep, handleChange, datos }) => {
     // Lista de códigos de área con su lugar de origen en México

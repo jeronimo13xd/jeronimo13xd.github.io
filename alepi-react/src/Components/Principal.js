@@ -1,78 +1,60 @@
-import React from 'react';
-import './Princpal.css';
-import emailIcon from '../assets/Mail.svg'; // Asegúrate de que estas rutas sean correctas
-import whatsappIcon from '../assets/Whats.svg';
-import starIcon from '../assets/EstrellaCompleta.svg';
-import starHalfIcon from '../assets/EstrellaVacia.svg';
-import './Footer.css';
+import React from "react";
+import "./Princpal.css";
+import defaultProfilePic from "../assets/UsuarioH.png"; // Imagen de perfil por defecto
 
 const professionals = [
-    {
-        name: 'Nombre 1',
-        specialty: 'Especialidad 1',
-        emailLink: '#',
-        whatsappLink: '#',
-        rating: 4
-    },
-    {
-        name: 'Nombre 2',
-        specialty: 'Especialidad 2',
-        emailLink: '#',
-        whatsappLink: '#',
-        rating: 3
-    },
-    {
-        name: 'Nombre 3',
-        specialty: 'Especialidad 3',
-        emailLink: '#',
-        whatsappLink: '#',
-        rating: 2
-    },
-    {
-        name: 'Nombre 4',
-        specialty: 'Especialidad 4',
-        emailLink: '#',
-        whatsappLink: '#',
-        rating: 3
-    }
+    { name: "Nombre 1", specialty: "Perito", image: defaultProfilePic },
+    { name: "Nombre 2", specialty: "Abogado", image: defaultProfilePic },
+    { name: "Nombre 3", specialty: "Psicólogo", image: defaultProfilePic },
+    { name: "Nombre 4", specialty: "Especialidad", image: defaultProfilePic }
 ];
 
 const Principal = () => {
     return (
-        <div className="professionals-container">
-            {professionals.map((professional, index) => (
-                <div className="professional-card" key={index}>
-                    <div className="professional-info">
-                        <div className="professional-photo">
-                            <img src={`https://via.placeholder.com/100?text=Foto+${index + 1}`} alt={`Foto ${professional.name}`} />
-                        </div>
-                        <div className="professional-details">
-                            <h3>{professional.name.toUpperCase()}</h3>
-                            <p>{professional.specialty.toUpperCase()}</p>
-                        </div>
-                    </div>
-                    <div className="professional-contact">
-                        <a href={professional.emailLink} className="contact-button">
-                            <img src={emailIcon} alt="Correo" />
-                            Contactar por correo
-                        </a>
-                        <a href={professional.whatsappLink} className="contact-button">
-                            <img src={whatsappIcon} alt="WhatsApp" />
-                            Contactar por WhatsApp
-                        </a>
-                    </div>
-                    <div className="professional-rating">
-                        {Array.from({ length: 5 }, (_, starIndex) => (
-                            <img
-                                key={starIndex}
-                                src={starIndex < professional.rating ? starIcon : starHalfIcon}
-                                alt="Valoración"
-                                className="rating-star"
-                            />
+        <div className="principal-container">
+            {/* Sección de búsqueda */}
+            <div className="principal-search">
+                <button className="ps-option">Perito</button>
+                <button className="ps-option">Abogado</button>
+                <button className="ps-option">Psicólogo</button>
+                <button className="ps-search-btn">Buscar</button>
+            </div>
+
+            {/* Contenido central en dos columnas */}
+            <div className="principal-content">
+                {/* Columna izquierda: Lista de profesionales */}
+                <div className="ps-professionals">
+                    <h2 className="ps-title">Profesionales</h2>
+                    <div className="ps-list">
+                        {professionals.map((prof, index) => (
+                            <div className="ps-card" key={index}>
+                                <img src={prof.image} alt={`Foto de ${prof.name}`} className="ps-img" />
+                                <div className="ps-info">
+                                    <h3>{prof.name}</h3>
+                                    <p>{prof.specialty}</p>
+                                </div>
+                            </div>
                         ))}
                     </div>
                 </div>
-            ))}
+
+                {/* Columna derecha: Artículo y Video */}
+                <div className="ps-articles-videos">
+                    <div className="ps-article">
+                        <h2 className="ps-title">Artículo</h2>
+                        <p className="ps-author">Autor: Nombre del Autor</p>
+                        <p className="ps-excerpt">
+                            Este es un extracto del artículo. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        </p>
+                    </div>
+                    <div className="ps-video">
+                        <h2 className="ps-title">Video</h2>
+                        <div className="ps-video-placeholder">
+                            VIDEO
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };

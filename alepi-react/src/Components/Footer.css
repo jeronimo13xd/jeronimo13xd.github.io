@@ -1,43 +1,23 @@
-/* Estilos para el Footer */
+/* Estilos base para el footer */
 .footer {
-  background-color: #3C3C3C !important;
-  color: #ffffff !important;
-  padding: 40px 20px;
-  width: 100%;
-  position: relative;
-  margin-top: 0;
-  /* Asegurar que no haya espacio arriba */
-  z-index: 10;
-}
-
-/* Evitar cualquier superposición de fondo blanco */
-.footer::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
   background-color: #3C3C3C;
-  z-index: -1;
+  color: #ffffff;
+  padding: 30px 20px;
+  width: 100%;
+  margin-top: auto;
+  text-align: center;
 }
 
-/* Corregir el espaciado del contenedor */
-.container-fluid {
-  padding: 0;
-  margin: 0;
-}
-
-/* Asegurar que los textos sean blancos */
-.footer h5,
-.footer p,
-.footer a {
-  color: #ffffff !important;
+/* Espaciado entre secciones */
+.footer h5 {
+  font-size: 1rem;
+  margin-bottom: 10px;
 }
 
 /* Logo */
 .logoFooter {
-  height: 60px;
+  height: 50px;
+  max-width: 100%;
 }
 
 /* Enlaces */
@@ -45,7 +25,7 @@
 .footer a {
   color: #bbb;
   text-decoration: none;
-  transition: color 0.3s;
+  transition: color 0.3s ease-in-out;
 }
 
 .acerca:hover,
@@ -53,27 +33,38 @@
   color: #fff;
 }
 
-/* Iconos de redes */
+/* Redes Sociales */
 .redes-iconos {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   justify-content: center;
 }
 
 .redes-iconos img {
   width: 30px;
   height: 30px;
-  transition: transform 0.3s;
+  transition: transform 0.3s ease-in-out;
 }
 
 .redes-iconos img:hover {
   transform: scale(1.1);
 }
 
-/* Responsividad */
+/* Espaciado y ajuste en pantallas pequeñas */
 @media (max-width: 768px) {
   .footer {
-    flex-direction: column;
-    text-align: center;
+    padding: 20px 15px;
+  }
+
+  .redes-iconos {
+    gap: 8px;
+  }
+
+  .footer h5 {
+    font-size: 0.9rem;
+  }
+
+  .logoFooter {
+    height: 40px;
   }
 }

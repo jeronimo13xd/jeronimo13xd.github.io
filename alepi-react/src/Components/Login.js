@@ -101,9 +101,7 @@ function Login() {
                 {message && <p className="mt-3 text-center">{message}</p>}
             </div>
 
-            <footer className="footer mt-auto py-3">
-                {/* Contenido del footer... */}
-            </footer>
+
         </>
     );
 }

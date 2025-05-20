@@ -1,18 +1,19 @@
 <?php
-// Mostrar errores para depuración (puedes desactivar en producción)
+// Mostrar errores (útil para desarrollo)
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Permitir solicitudes desde cualquier origen (CORS)
+// CORS y tipo de contenido
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Allow-Headers: Content-Type");
+header("Content-Type: application/json; charset=UTF-8");
 
-// Configurar la conexión a la base de datos
+// Conexión a la base de datos
 $servername = "localhost";
 $username   = "root";
 $password   = "";
-$dbname     = "alepi2"; // Asegúrate de usar el nombre correcto
+$dbname     = "alepi2";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
@@ -23,33 +24,40 @@ if ($conn->connect_error) {
     exit;
 }
 
-// Leer el body de la solicitud (JSON)
+// Obtener y decodificar los datos enviados
 $data = json_decode(file_get_contents("php://input"), true);
 
-// Validar campos requeridos
-if (empty($data['correo']) || empty($data['contrasena']) || empty($data['nombre'])) {
+// Validar los campos requeridos
+if (
+    empty($data['correo']) ||
+    empty($data['contrasena']) ||
+    empty($data['nombre'])
+) {
     echo json_encode([
         "status" => "error",
-        "message" => "Los campos 'correo', 'nombre' y 'contrasena' son obligatorios."
+        "message" => "Faltan datos: correo, contraseña o nombre."
     ]);
     exit;
 }
 
+// Preparar los valores
 $correo     = $data['correo'];
-$contrasena = $data['contrasena']; // Contraseña en texto plano
+$contrasena = password_hash($data['contrasena'], PASSWORD_DEFAULT);
 $nombre     = $data['nombre'];
+$estado     = "Activo";
+$fecha      = date("Y-m-d");
+$tipo       = "Cliente"; // Valor por defecto
 
-// Verificar si el correo ya existe
+// Verificar si el correo ya está registrado
 $sql_check = "SELECT * FROM Usuarios WHERE Correo = ?";
 $stmt_check = $conn->prepare($sql_check);
 $stmt_check->bind_param("s", $correo);
 $stmt_check->execute();
 $result_check = $stmt_check->get_result();
-
 if ($result_check->num_rows > 0) {
     echo json_encode([
         "status" => "error",
-        "message" => "Este correo ya tiene una cuenta registrada en ALEPI."
+        "message" => "Este correo ya está registrado."
     ]);
     $stmt_check->close();
     exit;
@@ -57,27 +65,32 @@ if ($result_check->num_rows > 0) {
 $stmt_check->close();
 
 // Insertar nuevo usuario
-$contrasenaHash = password_hash($contrasena, PASSWORD_DEFAULT);
-$fechaRegistro  = date('Y-m-d');
-$estado         = "Activo";
+$sql = "INSERT INTO Usuarios (Correo, Nombre, Contrasena, FechaRegistro, Estado, TipoUsuario)
+        VALUES (?, ?, ?, ?, ?, ?)";
 
-$sql_insert = "INSERT INTO Usuarios (Correo, Nombre, Contrasena, FechaRegistro, Estado) 
-               VALUES (?, ?, ?, ?, ?)";
-$stmt_insert = $conn->prepare($sql_insert);
-$stmt_insert->bind_param("sssss", $correo, $nombre, $contrasenaHash, $fechaRegistro, $estado);
-
-if ($stmt_insert->execute()) {
+$stmt = $conn->prepare($sql);
+if (!$stmt) {
     echo json_encode([
-        "status"   => "success",
-        "idUsuario" => $conn->insert_id,
-        "message"  => "Usuario registrado con éxito."
+        "status" => "error",
+        "message" => "Error preparando SQL: " . $conn->error
+    ]);
+    exit;
+}
+
+$stmt->bind_param("ssssss", $correo, $nombre, $contrasena, $fecha, $estado, $tipo);
+
+if ($stmt->execute()) {
+    echo json_encode([
+        "status" => "success",
+        "message" => "Usuario registrado con éxito",
+        "idUsuario" => $conn->insert_id
     ]);
 } else {
     echo json_encode([
         "status" => "error",
-        "message" => "Error al insertar: " . $stmt_insert->error
+        "message" => "No se pudo registrar: " . $stmt->error
     ]);
 }
 
-$stmt_insert->close();
+$stmt->close();
 $conn->close();

@@ -19,12 +19,12 @@ const Topbar = () => {
   return (
     <Navbar expand={false} className="bg-body-tertiary mb-3">
       <Container fluid>
-        <Navbar.Brand href="#">
+        <Navbar.Brand href="/">
           <img src={logo} alt="ALEPI Logo" style={{ height: '40px' }} />
         </Navbar.Brand>
 
         <Nav className="Arriba mx-auto custom-nav d-flex flex-row align-items-center">
-          <Nav.Link href="/">Directorio</Nav.Link>
+          <Nav.Link href="/Directorio">Directorio</Nav.Link>
           <Nav.Link href="/Articulos">Artículos</Nav.Link>
           <Nav.Link href="/Videos">Videos</Nav.Link>
         </Nav>
