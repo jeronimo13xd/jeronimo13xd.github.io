@@ -1,0 +1,63 @@
+/* ─────────────────────────────────────────────
+   AppSidebar.css   –   estilos del SidebarAdmin
+   ───────────────────────────────────────────── */
+
+/* contenedor lateral fijo */
+.admin-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 220px;               /* ancho del menú */
+  height: 100vh;
+  overflow-y: auto;
+  background: #f8f9fa;        /* gris Bootstrap */
+  border-right: 1px solid #dee2e6;
+  padding: 1rem;
+  z-index: 1060;              /* encima del backdrop del off-canvas */
+}
+
+/* lista limpia */
+.admin-sidebar ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.admin-sidebar li {
+  margin-bottom: .5rem;
+}
+
+.admin-sidebar a {
+  color: #0d6efd;             /* azul Bootstrap */
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.admin-sidebar a:hover {
+  text-decoration: underline;
+}
+
+/* -------- desplazamiento del contenido -------- */
+body.sidebar-open .app-wrapper {
+  margin-left: 220px;         /* igual que el ancho del sidebar */
+}
+
+/* --------- ajuste para móviles (< 768px) ------ */
+@media (max-width: 767px) {
+  .admin-sidebar {
+    transform: translateX(-100%);
+    transition: transform .3s ease;
+  }
+  body.sidebar-open .admin-sidebar {
+    transform: translateX(0);
+  }
+  /* en móvil NO empujamos el contenido */
+  body.sidebar-open .app-wrapper {
+    margin-left: 0;
+  }
+}
+
+/* -------- elevamos el backdrop del Offcanvas ---- */
+.offcanvas-backdrop.show {
+  z-index: 1050;              /* menor que 1060 del sidebar */
+}

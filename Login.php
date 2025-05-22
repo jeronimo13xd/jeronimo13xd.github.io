@@ -1,87 +1,93 @@
 <?php
-// Mostrar errores (desactivar en prod si gustas)
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+/**
+ * Login.php — Endpoint de autenticación
+ * -------------------------------------
+ * 1. Recibe JSON { Correo, Contrasena }
+ * 2. Valida usuario y password (hash bcrypt)
+ * 3. Carga permisos y devuelve al frontend:
+ *      { status:"success", usuario:{ id, nombre, correo, permisos:[] } }
+ * 4. Maneja CORS y OPTIONS
+ */
 
-// Configurar CORS
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: POST");
-header("Access-Control-Allow-Headers: Content-Type");
+header('Content-Type: application/json; charset=utf-8');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
 
-// Manejo preflight
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    header("Access-Control-Allow-Methods: POST, OPTIONS");
-    header("Access-Control-Allow-Headers: Content-Type");
-    exit(0);
+    http_response_code(200);
+    exit;
 }
 
-// Conexión a la base de datos
-$servername = "localhost";
-$username   = "root";
-$password   = "";
-$dbname     = "alepi2";
+/* ─────────────────────────────────────────────────────────
+   Bootstrap de conexión y middleware
+   ───────────────────────────────────────────────────────── */
+require_once __DIR__ . '/Permisos.php';   // incluye conexion.php y session_start
 
-$conn = new mysqli($servername, $username, $password, $dbname);
-if ($conn->connect_error) {
+/* ─────────────────────────────────────────────────────────
+   Leer cuerpo JSON
+   ───────────────────────────────────────────────────────── */
+$input = json_decode(file_get_contents('php://input'), true);
+
+if (!isset($input['Correo'], $input['Contrasena'])) {
     echo json_encode([
-        "status" => "error",
-        "message" => "Fallo de conexión: " . $conn->connect_error
+        'status'  => 'error',
+        'message' => 'Faltan campos (Correo, Contrasena)'
     ]);
     exit;
 }
 
-// Leer body JSON
-$data = json_decode(file_get_contents("php://input"));
+$correo = trim($input['Correo']);
+$pass   = trim($input['Contrasena']);
 
-if (!isset($data->Correo) || !isset($data->Contrasena)) {
-    echo json_encode([
-        "status" => "error",
-        "message" => "Faltan datos para login (Correo, Contrasena)."
-    ]);
-    exit;
-}
+/* ─────────────────────────────────────────────────────────
+   Buscar usuario
+   ───────────────────────────────────────────────────────── */
+try {
+    $stmt = $pdo->prepare(
+        "SELECT ID_Usuario, Nombre, Correo, Contrasena
+         FROM   Usuarios
+         WHERE  Correo = :correo
+         LIMIT  1"
+    );
+    $stmt->execute(['correo' => $correo]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-$correo     = $data->Correo;
-$contrasena = $data->Contrasena;
-
-// Consulta al usuario
-$sql = "SELECT * FROM Usuarios WHERE Correo = ?";
-$stmt = $conn->prepare($sql);
-if ($stmt === false) {
-    echo json_encode([
-        "status" => "error",
-        "message" => "Error en la preparación de la consulta: " . $conn->error
-    ]);
-    exit;
-}
-
-$stmt->bind_param("s", $correo);
-$stmt->execute();
-$result = $stmt->get_result();
-
-// Si existe
-if ($result->num_rows > 0) {
-    $user = $result->fetch_assoc();
-
-    // Verificar la contraseña
-    if (password_verify($contrasena, $user['Contrasena'])) {
+    if (!$user) {
         echo json_encode([
-            "status"  => "success",
-            "message" => "Login exitoso",
-            "userID"  => $user['ID_Usuario'],
+            'status'  => 'error',
+            'message' => 'No existe usuario con ese correo'
         ]);
-    } else {
-        echo json_encode([
-            "status" => "error",
-            "message" => "Credenciales inválidas (contraseña incorrecta)"
-        ]);
+        exit;
     }
-} else {
+
+    /* ───── Verificar contraseña ───── */
+    if (!password_verify($pass, $user['Contrasena'])) {
+        echo json_encode([
+            'status'  => 'error',
+            'message' => 'Credenciales inválidas (contraseña incorrecta)'
+        ]);
+        exit;
+    }
+
+    /* ───── Autenticado: cargar permisos ───── */
+    cargarPermisos((int)$user['ID_Usuario'], $pdo);
+
+    /* ───── Respuesta al frontend ───── */
     echo json_encode([
-        "status" => "error",
-        "message" => "No se encontró usuario con ese correo"
+        'status'  => 'success',
+        'usuario' => [
+            'id'       => (int)$user['ID_Usuario'],
+            'nombre'   => $user['Nombre'],
+            'correo'   => $user['Correo'],
+            'permisos' => $_SESSION['permisos']     // array de strings
+        ]
+    ]);
+} catch (Throwable $e) {
+    http_response_code(500);
+    echo json_encode([
+        'status'  => 'error',
+        'message' => 'Error interno del servidor',
+        'detail'  => $e->getMessage()   // quita este campo en producción
     ]);
 }
-
-$stmt->close();
-$conn->close();
