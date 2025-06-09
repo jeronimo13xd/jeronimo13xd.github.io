@@ -1,93 +1,94 @@
-import React, { useState, useContext } from 'react';
+// src/Components/Login.js
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import Logo from '../assets/LogoLogin.svg';
-import './Login.css';
+import { useContext } from 'react';
+import AuthContext from './AuthContext';
+import Logo from '../assets/LogoLogin.svg'; // pon tu logo en /src/assets
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './Footer.css';
-import { AuthContext } from '../Components/AuthContext';
+import './Login.css';
 
-function Login() {
-    const [Correo, setCorreo] = useState('');
-    const [Contrasena, setContrasena] = useState('');
-    const [message, setMessage] = useState('');
-    const navigate = useNavigate();
-    const { login } = useContext(AuthContext);
+export default function Login() {
+  const [Correo, setCorreo] = useState('');
+  const [Contrasena, setContrasena] = useState('');
+  const [error, setError] = useState('');
+  const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
 
-    const handleLogin = async (e) => {
-        e.preventDefault();
-        try {
-            const response = await axios.post(
-                'http://localhost/alepirea/Login.php',
-                { Correo, Contrasena },
-                { headers: { "Content-Type": "application/json" } }
-            );
+  // Si tu backend corre en http://localhost/alepirea, configura baseURL:
+  axios.defaults.baseURL = 'http://localhost/alepirea/';
+  axios.defaults.withCredentials = true; // si usas sesiones
 
-            const res = response.data;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
 
-            if (res.status === "success" && res.usuario) {
-                // Guardar en localStorage y contexto global
-                login({
-                    id: res.usuario.id,
-                    nombre: res.usuario.nombre,
-                    correo: res.usuario.correo,
-                    permisos: res.usuario.permisos // 👈 aquí se guardan
-                });
+    try {
+      const { data: res } = await axios.post(
+        'Login.php',
+        { Correo, Contrasena }
+      );
 
-                setMessage('Login exitoso');
-                navigate('/perfil'); // Redirige a donde necesites
-            } else {
-                setMessage(res.message || 'Credenciales inválidas');
-            }
-        } catch (error) {
-            console.error("Error en login:", error);
-            setMessage('Error de conexión o servidor');
-        }
-    };
+      if (res.status === 'success') {
+        const u = {
+          id: res.usuario.id,          // coincide con Login.php → "id"
+          nombre: res.usuario.nombre,
+          correo: res.usuario.correo,
+          rol: res.usuario.rol,
+          permisos: res.usuario.permisos
+        };
+        login(u);
 
-    return (
-        <div className='contorno'>
-            <Form className="login-form p-4 rounded shadow" onSubmit={handleLogin}>
-                <img src={Logo} className='Logs' alt='LogoLogin' />
+        // Redirige según rol
+        if (u.rol === 'negocio') navigate('/dashboard-negocio');
+        else if (u.rol === 'ventas') navigate('/dashboard-ventas');
+        else if (u.rol === 'superadmin') navigate('/dashboard');
+        else navigate('/perfil');
+      } else {
+        setError(res.message);
+      }
+    } catch (err) {
+      if (err.response?.status === 400) setError('Faltan campos');
+      else if (err.response?.status === 401) setError('Credenciales inválidas');
+      else setError('Error de conexión');
+    }
+  };
 
-                <Form.Group className="mb-3" controlId="formBasicEmail">
-                    <Form.Label className='textoLogin'>Correo Electrónico</Form.Label>
-                    <Form.Control
-                        type="email"
-                        placeholder="Ingresa tu correo electrónico"
-                        className="border-primary input-white"
-                        value={Correo}
-                        onChange={(e) => setCorreo(e.target.value)}
-                        required
-                    />
-                </Form.Group>
+  return (
+    <div className="contorno">
+      <form className="login-form" onSubmit={handleSubmit}>
+        <img src={Logo} alt="logo" className="Logs" />
+        {error && <div className="alert alert-danger">{error}</div>}
 
-                <Form.Group className="mb-3" controlId="formBasicPassword">
-                    <Form.Label className='textoLogin'>Contraseña</Form.Label>
-                    <Form.Control
-                        type="password"
-                        placeholder="Ingresa tu contraseña"
-                        className="border-danger input-white"
-                        value={Contrasena}
-                        onChange={(e) => setContrasena(e.target.value)}
-                        required
-                    />
-                </Form.Group>
+        <label>Correo Electrónico</label>
+        <input
+          type="email"
+          className="form-control input-white"
+          value={Correo}
+          onChange={(e) => setCorreo(e.target.value)}
+          required
+        />
 
-                <Form.Group className="mb-3 form-check">
-                    <Form.Check type="checkbox" label="Recordar" className="textoLogin" />
-                </Form.Group>
+        <label>Contraseña</label>
+        <input
+          type="password"
+          className="form-control input-white"
+          value={Contrasena}
+          onChange={(e) => setContrasena(e.target.value)}
+          required
+        />
 
-                <Button variant="success" type="submit" className="w-100 custom-button">
-                    Entrar
-                </Button>
-            </Form>
-
-            {message && <p className="mt-3 text-center">{message}</p>}
+        <div className="form-check my-2">
+          <input id="check" type="checkbox" className="form-check-input" />
+          <label htmlFor="check" className="form-check-label">
+            Recordar
+          </label>
         </div>
-    );
-}
 
-export default Login;
+        <button type="submit" className="btn btn-success w-100 custom-button">
+          Entrar
+        </button>
+      </form>
+    </div>
+  );
+}

@@ -1,112 +1,153 @@
-import React, { useContext } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import React                    from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import RutaProtegida            from './Components/RutaProtegida';
+import { useAuth }              from './Components/AuthContext';
 
-import AuthProvider, { AuthContext } from './Components/AuthContext';
-import { UserProvider } from './Pages/ContextoUsuario';
+/* ----------  layout / genéricos  ---------- */
+import TopSidebar   from './Components/TopSidebar';
+import Footer       from './Components/Footer';
+import Login        from './Components/Login';
 
-import Topbar        from './Components/TopSidebar';
-import Footer        from './Components/Footer';
-import RutaProtegida from './Components/RutaProtegida';
+/* ----------  páginas “utilitarias”  ---------- */
+import SinAcceso    from './Pages/SinAcceso';
+import NotFound     from './Pages/NotFound';
 
-/*  Páginas  */
-import Login           from './Components/Login';
-import Acerca          from './Components/Acerca';
-import AvisoPriv       from './Components/AvisoPriv';
-import PregFrec        from './Components/PregFrec';
-import Videos          from './Components/Videos';
-import Articulos       from './Components/Articulos';
-import Info            from './Components/Info';
-import Principal       from './Components/Principal';
-import Suscripcion     from './Pages/Suscripcion';
-import Perfil          from './Pages/Perfil';
-import Notificaciones  from './Pages/Notificaciones';
-import ArticulosU      from './Pages/ArticulosU';
-import ConfiguracionU  from './Pages/ConfiguracionU';
-import VideosU         from './Pages/VideosU';
-import Directorio      from './Pages/Directorio';
-import SinAcceso       from './Pages/SinAcceso';
+/* ----------  páginas de usuario  ---------- */
+import Perfil       from './Pages/Perfil';
 
-import './App.css';
+/* ----------  páginas de super-admin  ---------- */
+import AdminRoles           from './Pages/AdminRoles';
+import SupAdSis_Dashboard   from './Pages/SupAdSis_Dashboard';
+import SuAd_Usuarios        from './Pages/SuAd_Usuarios';
 
-/* ───────────────────────────────────────────────────── */
+/* ----------  páginas NEGOCIO  ---------- */
+import DashboardNegocio     from './Pages/Negocio/DashboardNegocio';
+import Aprobaciones         from './Pages/Negocio/Aprobaciones';
+import Suscripciones from './Pages/Negocio/Suscripciones';
+import Pagos from './Pages/Negocio/Pagos';
 
-const AppContent = () => {
-  const { user } = useContext(AuthContext);   // se mantiene por si lo necesitas
+/* ----------  páginas VENTAS  ---------- */
+import DashboardVentas      from './Pages/Ventas/DashboardVentas';
+
+function App() {
+  const { user } = useAuth();
 
   return (
-    <div className="app-wrapper">
-      {/* Menú superior y off-canvas azul */}
-      <Topbar />
+    <>
+      <TopSidebar />
 
-      {/*  Rutas  */}
+      {/* ----------  CONTENIDO PRINCIPAL  ---------- */}
       <div className="main-content px-3">
         <Routes>
-          {/* Públicas */}
-          <Route path="/"            element={<Principal />} />
-          <Route path="/login"       element={<Login />} />
-          <Route path="/Acerca"      element={<Acerca />} />
-          <Route path="/AvisoPriv"   element={<AvisoPriv />} />
-          <Route path="/PregFrec"    element={<PregFrec />} />
-          <Route path="/Videos"      element={<Videos />} />
-          <Route path="/Articulos"   element={<Articulos />} />
-          <Route path="/Info"        element={<Info />} />
-          <Route path="/Suscripcion" element={<Suscripcion />} />
-          <Route path="/SinAcceso"   element={<SinAcceso />} />
 
-          {/* Protegidas */}
-          <Route path="/Perfil" element={
-            <RutaProtegida permisoRequerido="usuarios:read">
-              <Perfil />
-            </RutaProtegida>
-          }/>
+          {/* ───── RUTAS PÚBLICAS ───── */}
+          <Route
+            path="/login"
+            element={
+              user
+                ? <Navigate to="/dashboard/super" replace />
+                : <Login />
+            }
+          />
+          <Route path="/sin-acceso" element={<SinAcceso />} />
 
-          <Route path="/Notificaciones" element={
-            <RutaProtegida permisoRequerido="notificaciones:create">
-              <Notificaciones />
-            </RutaProtegida>
-          }/>
+          {/* ───── RUTAS PROTEGIDAS ───── */}
+          {/* Perfil: cualquier usuario autenticado */}
+          <Route
+            path="/perfil"
+            element={
+              <RutaProtegida permisoRequerido={null}>
+                <Perfil />
+              </RutaProtegida>
+            }
+          />
 
-          <Route path="/ArticulosU" element={
-            <RutaProtegida permisoRequerido="articulos:read">
-              <ArticulosU />
-            </RutaProtegida>
-          }/>
+          {/* ----- Super-admin ----- */}
+          <Route
+            path="/roles"
+            element={
+              <RutaProtegida permisoRequerido="roles:read">
+                <AdminRoles />
+              </RutaProtegida>
+            }
+          />
 
-          <Route path="/VideosU" element={
-            <RutaProtegida permisoRequerido="videos:read">
-              <VideosU />
-            </RutaProtegida>
-          }/>
+          <Route
+            path="/dashboard/super"
+            element={
+              <RutaProtegida permisoRequerido="dashboard:read">
+                <SupAdSis_Dashboard />
+              </RutaProtegida>
+            }
+          />
 
-          <Route path="/ConfiguracionU" element={
-            <RutaProtegida permisoRequerido="configuracion:update">
-              <ConfiguracionU />
-            </RutaProtegida>
-          }/>
+          <Route
+            path="/usuarios"
+            element={
+              <RutaProtegida permisoRequerido="usuarios:read">
+                <SuAd_Usuarios />
+              </RutaProtegida>
+            }
+          />
 
-          <Route path="/Directorio" element={
-            <RutaProtegida permisoRequerido="usuarios:read">
-              <Directorio />
-            </RutaProtegida>
-          }/>
+          {/* ----- NEGOCIO ----- */}
+          <Route
+            path="/dashboard/negocio"
+            element={
+              <RutaProtegida permisoRequerido="dashboardnegocio:read">
+                <DashboardNegocio />
+              </RutaProtegida>
+            }
+          />
+
+          <Route
+            path="/aprobaciones"
+            element={
+              <RutaProtegida permisoRequerido="aprobaciones:read">
+                <Aprobaciones />
+              </RutaProtegida>
+            }
+          />
+
+          <Route
+           path="/suscripciones"
+            element={
+              <RutaProtegida permisoRequerido="suscripciones:read">
+                <Suscripciones />
+              </RutaProtegida>
+            }
+            />
+
+            <Route
+              path="/pagos"
+              element={
+                <RutaProtegida permisoRequerido="pagos:read">
+                  <Pagos />
+                </RutaProtegida>
+              }
+            />
+
+
+
+          {/* ----- VENTAS ----- */}
+          <Route
+            path="/dashboard/ventas"
+            element={
+              <RutaProtegida permisoRequerido="dashboardventas:read">
+                <DashboardVentas />
+              </RutaProtegida>
+            }
+          />
+
+          {/* ───── CATCH-ALL 404 ───── */}
+          <Route path="*" element={<NotFound />} />
+
         </Routes>
       </div>
 
       <Footer />
-    </div>
+    </>
   );
-};
-
-/* ───────────────────────────────────────────────────── */
-
-const App = () => (
-  <Router>
-    <AuthProvider>
-      <UserProvider>
-        <AppContent />
-      </UserProvider>
-    </AuthProvider>
-  </Router>
-);
+}
 
 export default App;

@@ -1,90 +1,82 @@
 <?php
-// Mostrar errores para depuración (desactiva en producción si gustas)
+ini_set('display_errors', '1');
 error_reporting(E_ALL);
-ini_set('display_errors', 1);
 
-// Permitir solicitudes desde cualquier origen (CORS)
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: POST");
-header("Access-Control-Allow-Headers: Content-Type");
+require_once __DIR__ . '/cors.php';
+require_once __DIR__ . '/Conexion.php';
+require_once __DIR__ . '/Permisos.php';
 
-// Conexión a la base de datos
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "alepi2";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Verificar conexión
-if ($conn->connect_error) {
-    die(json_encode([
-        "status" => "error",
-        "message" => "Error de conexión: " . $conn->connect_error
-    ]));
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
 
-// Obtener el ID del usuario desde el body JSON (POST)
-$data = json_decode(file_get_contents("php://input"), true);
-$idUsuario = $data['idUsuario'] ?? null;
+if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+    http_response_code(405);
+    echo json_encode(['status'=>'error','message'=>'Método no permitido']);
+    exit;
+}
 
-if (!$idUsuario) {
-    echo json_encode([
-        "status" => "error",
-        "message" => "ID de usuario no proporcionado."
-    ]);
+$idParam = $_GET['id'] ?? null;
+if (!$idParam) {
+    http_response_code(400);
+    echo json_encode(['status'=>'error','message'=>'Falta parámetro id']);
     exit;
 }
 
 try {
-    // Consulta SQL (MODIFICADA PARA INCLUIR TELÉFONO)
-    $sql = "SELECT 
-                u.Nombre AS nombre, 
-                u.Correo AS correo, 
-                p.ApellidoP AS apellidoPaterno, 
-                p.ApellidoM AS apellidoMaterno,
-                p.Telefono AS telefono,  
-                p.CedulaProfesional AS cedulaProfesional, 
-                p.UniversidadEgreso AS universidad, 
-                p.Idiomas AS idiomas, 
-                p.Certificaciones AS certificaciones, 
-                p.ExperienciaLaboral AS experienciaLaboral, 
-                p.Honorarios AS honorarios, 
-                p.Ubicacion AS ubicacion, 
-                p.Calificacion AS calificacion,
-                e.Nombre AS especialidad
-            FROM Usuarios u
-            LEFT JOIN Profesionales p ON u.ID_Usuario = p.ID_Usuario
-            LEFT JOIN Especialidades e ON p.ID_Especialidad = e.ID_Especialidad
-            WHERE u.ID_Usuario = ?";
+    $id = (int)$idParam;
 
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $idUsuario);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $sql = "
+      SELECT
+        u.ID_Usuario,
+        u.TipoUsuario              AS rol,
+        u.Correo,
+        u.Nombre                   AS nombreCuenta,
+        u.Estado,
+        pr.Nombre                  AS nombreVisible,
+        pr.ApellidoP               AS apellidoP,
+        pr.ApellidoM               AS apellidoM,
+        pr.Telefono,
+        pr.CedulaProfesional,
+        pr.UniversidadEgreso,
+        pr.Idiomas,
+        pr.Certificaciones,
+        pr.ExperienciaLaboral,
+        pr.Honorarios,
+        pr.Ubicacion,
+        p.Nombre                   AS profesion,
+        e.Nombre                   AS especialidad
+      FROM usuarios u
+      LEFT JOIN profesionales pr ON pr.ID_Usuario = u.ID_Usuario
+      LEFT JOIN profesionales_profesiones pp ON pp.ID_Profesional = pr.ID_Profesional
+      LEFT JOIN profesiones p ON p.ID_Profesion = pp.ID_Profesion
+      LEFT JOIN especialidades e ON e.ID_Especialidad = pp.ID_Especialidad
+      WHERE u.ID_Usuario = :id
+      LIMIT 1
+    ";
 
-    if ($result->num_rows > 0) {
-        $usuario = $result->fetch_assoc();
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute(['id' => $id]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // Decodificar JSON si es necesario
-        $usuario['idiomas'] = json_decode($usuario['idiomas'] ?? '[]');
-        $usuario['certificaciones'] = json_decode($usuario['certificaciones'] ?? '[]');
-
-        echo json_encode([
-            "status" => "success",
-            "data" => $usuario
-        ]);
-    } else {
-        echo json_encode([
-            "status" => "error",
-            "message" => "Usuario no encontrado."
-        ]);
+    if (!$row) {
+        http_response_code(404);
+        echo json_encode(['status'=>'error','message'=>'Usuario no encontrado']);
+        exit;
     }
-} catch (Exception $e) {
-    echo json_encode([
-        "status" => "error",
-        "message" => $e->getMessage()
-    ]);
-} finally {
-    $conn->close();
+
+    $row['Idiomas']         = $row['Idiomas']         ? json_decode($row['Idiomas'], true) : [];
+    $row['Certificaciones'] = $row['Certificaciones'] ? array_map('trim', explode(',', $row['Certificaciones'])) : [];
+
+    echo json_encode(['status' => 'success', 'data' => $row]);
+    exit;
+
+} catch (PDOException $e) {
+    http_response_code(500);
+    echo json_encode(['status'=>'error','message'=>'Error en la base de datos: '.$e->getMessage()]);
+    exit;
+} catch (Throwable $e) {
+    http_response_code(500);
+    echo json_encode(['status'=>'error','message'=>'Error interno del servidor']);
+    exit;
 }

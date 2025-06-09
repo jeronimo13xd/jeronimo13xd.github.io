@@ -1,21 +1,96 @@
-import React, { useContext } from 'react';
-import { Link } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import Container   from 'react-bootstrap/Container';
-import Nav         from 'react-bootstrap/Nav';
-import Navbar      from 'react-bootstrap/Navbar';
-import Offcanvas   from 'react-bootstrap/Offcanvas';
-import logo        from '../assets/logo.svg';
-import Sobre       from '../assets/Sobre.svg';
-import IniSes      from '../assets/IconIniSes.svg';
-import Susc        from '../assets/Susc.svg';
+// src/Components/TopSidebar.jsx
+import React, { useContext } from "react";
+import { Link } from "react-router-dom";
+import {
+  Container,
+  Nav,
+  Navbar,
+  Offcanvas,
+} from "react-bootstrap";
+import "bootstrap/dist/css/bootstrap.min.css";
 
-import { AuthContext } from '../Components/AuthContext';
-import './TopSidebar.css';
+import logo   from "../assets/logo.svg";
+import Sobre  from "../assets/Sobre.svg";
+import IniSes from "../assets/IconIniSes.svg";
+import Susc   from "../assets/Susc.svg";
 
-const Topbar = () => {
+import { AuthContext } from "./AuthContext";
+import "./TopSidebar.css";
+
+/* ─────────────────────────  Sidebars por rol  ───────────────────────── */
+
+const SidebarGuest = () => (
+  <>
+    <Nav.Item className="InicSes">
+      <img src={IniSes} alt="" className="nav-icon" />
+      <Link to="/login" className="nav-link">Inicia Sesión</Link>
+    </Nav.Item>
+
+    <Nav.Item className="SobrePag">
+      <img src={Sobre} alt="" className="nav-icon" />
+      <Link to="/PregFrec" className="nav-link">Sobre la Página</Link>
+    </Nav.Item>
+
+    <Nav.Item className="Susc">
+      <img src={Susc} alt="" className="nav-icon" />
+      <Link to="/Suscripcion" className="nav-link">Únete a ALEPI</Link>
+    </Nav.Item>
+
+    <Nav.Item>
+      <Link to="/Info" className="nav-link">Conoce ALEPI</Link>
+    </Nav.Item>
+  </>
+);
+
+/* ───── SUPERADMIN / SISTEMA ───── */
+const SidebarSuper = ({ logout }) => (
+  <>
+    <Nav.Item><Link to="/dashboard/super" className="nav-link">Dashboard</Link></Nav.Item>
+    <Nav.Item><Link to="/roles"           className="nav-link">Roles</Link></Nav.Item>
+    <Nav.Item><Link to="/usuarios"        className="nav-link">Usuarios</Link></Nav.Item>
+    <Nav.Item><button onClick={logout} className="nav-link btn btn-link">Cerrar Sesión</button></Nav.Item>
+  </>
+);
+
+/* ───── NEGOCIO ───── */
+const SidebarNegocio = ({ logout }) => (
+  <>
+    <Nav.Item><Link to="/dashboard/negocio" className="nav-link">Dashboard</Link></Nav.Item>
+    {/* Ruta al listado de aprobaciones */}
+    <Nav.Item><Link to="/aprobaciones"       className="nav-link">Aprobaciones</Link></Nav.Item>
+    <Nav.Item><Link to="/suscripciones"      className="nav-link">Suscripciones</Link></Nav.Item>
+    <Nav.Item><Link to="/pagos"              className="nav-link">Pagos</Link></Nav.Item>
+    <Nav.Item><button onClick={logout} className="nav-link btn btn-link">Cerrar Sesión</button></Nav.Item>
+  </>
+);
+
+/* ───── VENTAS ───── */
+const SidebarVentas = ({ logout }) => (
+  <>
+    <Nav.Item><Link to="/dashboard/ventas"  className="nav-link">Dashboard</Link></Nav.Item>
+    <Nav.Item><Link to="/profesionales/new" className="nav-link">Alta Profesionales</Link></Nav.Item>
+    <Nav.Item><Link to="/kpi"               className="nav-link">KPIs</Link></Nav.Item>
+    <Nav.Item><button onClick={logout} className="nav-link btn btn-link">Cerrar Sesión</button></Nav.Item>
+  </>
+);
+
+/* ─────────────────────────  Topbar principal  ───────────────────────── */
+
+export default function Topbar() {
   const { user, logout } = useContext(AuthContext);
-  const isAdmin = user?.permisos?.includes('configuracion:update');      // 👈 permiso “signo” de admin
+
+  const renderSidebar = () => {
+    if (!user) return <SidebarGuest />;
+
+    // Normalizamos el nombre del rol
+    const rol = (user.rol || "").toString().trim().toLowerCase();
+
+    if (rol === "sistema" || rol === "superadmin") return <SidebarSuper  logout={logout} />;
+    if (rol === "negocio")                         return <SidebarNegocio logout={logout} />;
+    if (rol === "ventas")                          return <SidebarVentas  logout={logout} />;
+
+    return <SidebarGuest />;
+  };
 
   return (
     <Navbar expand={false} className="bg-body-tertiary mb-3">
@@ -40,68 +115,11 @@ const Topbar = () => {
 
           <Offcanvas.Body>
             <Nav className="flex-column pe-3">
-
-              {/* 1. Visitante (sin login) */}
-              {!user && (
-                <>
-                  <Nav.Item className="InicSes">
-                    <img src={IniSes} alt="" className="nav-icon" />
-                    <Link to="/login"  className="nav-link">Inicia Sesión</Link>
-                  </Nav.Item>
-
-                  <Nav.Item className="SobrePag">
-                    <img src={Sobre} alt="" className="nav-icon" />
-                    <Link to="/PregFrec" className="nav-link">Sobre la Página</Link>
-                  </Nav.Item>
-
-                  <Nav.Item className="Susc">
-                    <img src={Susc} alt="" className="nav-icon" />
-                    <Link to="/Suscripcion" className="nav-link">Únete a ALEPI</Link>
-                  </Nav.Item>
-
-                  <Nav.Item><Link to="/Info" className="nav-link">Conoce ALEPI</Link></Nav.Item>
-                </>
-              )}
-
-              {/* 2. Admin interno (superadmin / negocio / ventas) */}
-              {user && isAdmin && (
-                <>
-                  <Nav.Item><Link to="/dashboard"      className="nav-link">Dashboard</Link></Nav.Item>
-                  <Nav.Item><Link to="/usuarios"       className="nav-link">Usuarios</Link></Nav.Item>
-                  <Nav.Item><Link to="/profesionales"  className="nav-link">Profesionales</Link></Nav.Item>
-                  <Nav.Item><Link to="/articulos"      className="nav-link">Artículos CMS</Link></Nav.Item>
-                  <Nav.Item><Link to="/videos"         className="nav-link">Videos CMS</Link></Nav.Item>
-                  <Nav.Item><Link to="/suscripciones"  className="nav-link">Suscripciones</Link></Nav.Item>
-                  <Nav.Item><Link to="/pagos"          className="nav-link">Pagos & Facturas</Link></Nav.Item>
-                  <Nav.Item><Link to="/cupones"        className="nav-link">Cupones</Link></Nav.Item>
-                  <Nav.Item><Link to="/config"         className="nav-link">Configuración</Link></Nav.Item>
-                  <Nav.Item>
-                    <button onClick={logout} className="nav-link btn btn-link">Cerrar Sesión</button>
-                  </Nav.Item>
-                </>
-              )}
-
-              {/* 3. Usuario normal logeado (no admin) */}
-              {user && !isAdmin && (
-                <>
-                  <Nav.Item><Link to="/perfil"          className="nav-link">Mi Perfil</Link></Nav.Item>
-                  <Nav.Item><Link to="/Notificaciones" className="nav-link">Notificaciones</Link></Nav.Item>
-                  <Nav.Item><Link to="/ArticulosU"     className="nav-link">Artículos</Link></Nav.Item>
-                  <Nav.Item><Link to="/VideosU"        className="nav-link">Videos</Link></Nav.Item>
-                  <Nav.Item><Link to="/Info"           className="nav-link">Sobre la página</Link></Nav.Item>
-                  <Nav.Item><Link to="/ConfiguracionU" className="nav-link">Configuración</Link></Nav.Item>
-                  <Nav.Item>
-                    <button onClick={logout} className="nav-link btn btn-link">Cerrar Sesión</button>
-                  </Nav.Item>
-                </>
-              )}
-
+              {renderSidebar()}
             </Nav>
           </Offcanvas.Body>
         </Navbar.Offcanvas>
       </Container>
     </Navbar>
   );
-};
-
-export default Topbar;
+}

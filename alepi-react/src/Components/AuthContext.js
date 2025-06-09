@@ -1,36 +1,41 @@
-// AuthContext.js actualizado
-import React, { createContext, useState, useEffect } from "react";
+// src/Components/AuthContext.jsx
+import React, { createContext, useState, useEffect, useContext } from "react";
 
-export const AuthContext = createContext();
+export const AuthContext = createContext(null);
 
-const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState(null);
 
-    useEffect(() => {
-        const storedUser = localStorage.getItem("user");
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
-            console.log("🔄 Usuario cargado desde localStorage:", JSON.parse(storedUser));
-        }
-    }, []);
+  // Al montar, cargo el usuario desde localStorage
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("alepi_user");
+      if (stored) {
+        setUser(JSON.parse(stored));
+      }
+    } catch {
+      // nada
+    }
+  }, []);
 
-    const login = (userData) => {
-        setUser(userData);
-        localStorage.setItem("user", JSON.stringify(userData));
-        window.dispatchEvent(new Event("storage"));
-    };
+  function login(u) {
+    setUser(u);
+    localStorage.setItem("alepi_user", JSON.stringify(u));
+    localStorage.setItem("idUsuario", u.id); 
+  }
 
-    const logout = () => {
-        setUser(null);
-        localStorage.removeItem("user");
-        console.log("Cerrando sesión...");
-    };
+  function logout() {
+    setUser(null);
+    localStorage.removeItem("alepi_user");
+    localStorage.removeItem("idUsuario");
+  }
 
-    return (
-        <AuthContext.Provider value={{ user, login, logout }}>
-            {children}
-        </AuthContext.Provider>
-    );
-};
+  const ctxValue = { user, login, logout };
+  return <AuthContext.Provider value={ctxValue}>{children}</AuthContext.Provider>;
+}
 
-export default AuthProvider;
+export function useAuth() {
+  return useContext(AuthContext);
+}
+
+export default AuthContext;

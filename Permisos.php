@@ -1,81 +1,72 @@
 <?php
-/**
- * Permisos.php  – Middleware central de control de acceso
- * ------------------------------------------------------
- * 1. Inicia sesión (solo si no está iniciada).
- * 2. Carga la conexión PDO desde  conexion.php   (en la MISMA carpeta).
- * 3. Expone dos funciones:
- *      • cargarPermisos($idUsuario, PDO $pdo)
- *      • checkPermiso($modulo, $accion)
- *
- *  Uso típico en Login.php
- *  -----------------------
- *      require_once __DIR__ . '/Permisos.php';
- *      ...
- *      cargarPermisos($row['ID_Usuario'], $pdo);
- */
+// Permisos.php
+// ────────────────────────────────────────────────────────────────────────────
+// Funciones para manejar permisos del usuario (los guarda en $_SESSION).
+// Incluir este archivo después de cors.php y Conexion.php, antes de session_start().
+// ────────────────────────────────────────────────────────────────────────────
 
+// Si no hay sesión iniciada, iniciamos:
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-/* ─────────────────────────────────────────────────────────
-   Conexión PDO
-   ───────────────────────────────────────────────────────── */
-require_once __DIR__ . '/conexion.php';   // <-- Asegúrate de que este archivo exista
-//   • Debe devolver una instancia PDO en $pdo, por ejemplo:
-//
-//   $dsn  = "mysql:host=localhost;dbname=alepi2;charset=utf8mb4";
-//   $user = "root";
-//   $pass = "";
-//   $pdo  = new PDO($dsn, $user, $pass, [
-//       PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-//       PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-//   ]);
-
-/* ─────────────────────────────────────────────────────────
-   Funciones utilitarias
-   ───────────────────────────────────────────────────────── */
-
 /**
- * Carga TODOS los permisos del usuario autenticado
- * y los deja en $_SESSION['permisos'] como array plano
- *    ej: ["usuarios:read","articulos:create", ...]
+ * cargarPermisos
+ * ────────────────────────────────────────────────────────────────────────────
+ * Carga en $_SESSION['permisos'] un array de strings "Modulo:Accion" según
+ * las tablas usuario_rol + rol_permiso + permisos para el usuario $uid.
  *
- * @param int   $idUsuario  ID_Usuario autenticado
- * @param PDO   $pdo        Conexión PDO viva
+ * @param int    $uid  ID_Usuario del usuario logueado
+ * @param PDO    $pdo  Instancia PDO (ya conectada a la BD)
  */
-function cargarPermisos(int $idUsuario, PDO $pdo): void
-{
+function cargarPermisos(int $uid, PDO $pdo): void {
+    // Primero limpiamos cualquier permiso previo:
+    unset($_SESSION['permisos']);
+
     $sql = "
-        SELECT CONCAT(p.Modulo, ':', p.Accion) AS permiso
-        FROM   permisos      p
-        JOIN   rol_permiso   rp ON rp.ID_Permiso = p.ID_Permiso
-        JOIN   usuario_rol   ur ON ur.ID_Rol     = rp.ID_Rol
-        WHERE  ur.ID_Usuario = :uid
+      SELECT CONCAT(p.Modulo, ':', p.Accion) AS permiso
+      FROM usuario_rol ur
+      JOIN rol_permiso  rp ON rp.ID_Rol      = ur.ID_Rol
+      JOIN permisos     p  ON p.ID_Permiso   = rp.ID_Permiso
+      WHERE ur.ID_Usuario = :uid
     ";
     $stmt = $pdo->prepare($sql);
-    $stmt->execute(['uid' => $idUsuario]);
-    $_SESSION['permisos'] = $stmt->fetchAll(PDO::FETCH_COLUMN) ?: [];
+    $stmt->execute(['uid' => $uid]);
+    $perms = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+    // Guardamos el array (o array vacío si no hay nada):
+    $_SESSION['permisos'] = $perms ?: [];
 }
 
 /**
- * Revisa si el permiso existe en la sesión.
- * Si no existe → HTTP 403 + JSON de error y exit.
+ * checkPermiso
+ * ────────────────────────────────────────────────────────────────────────────
+ * Lanza HTTP 403 si el usuario no tiene el permiso "$modulo:$accion".
  *
- * @param string $modulo   nombre del módulo   ej: 'usuarios'
- * @param string $accion   acción CRUD         ej: 'create'
+ * @param string $modulo   Ejemplo: "roles", "usuarios", "articulos"
+ * @param string $accion   Ejemplo: "read", "create", "update", "delete"
  */
-function checkPermiso(string $modulo, string $accion): void
-{
-    $perm = "$modulo:$accion";
+function checkPermiso(string $modulo, string $accion): void {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    $permBuscada = strtolower($modulo . ':' . $accion);
 
-    if (!in_array($perm, $_SESSION['permisos'] ?? [], true)) {
+    $tusPerms = $_SESSION['permisos'] ?? [];
+    $found = false;
+    foreach ($tusPerms as $p) {
+        if (strtolower($p) === $permBuscada) {
+            $found = true;
+            break;
+        }
+    }
+
+    if (!$found) {
         http_response_code(403);
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode([
-            'error'   => "Permiso denegado ($perm)",
-            'status'  => 403
+            'status'  => 'error',
+            'message' => "Acceso denegado: falta permiso '$modulo:$accion'"
         ]);
         exit;
     }

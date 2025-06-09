@@ -1,146 +1,167 @@
-import React, { useEffect, useState } from "react";
+// src/Pages/Perfil.jsx
+import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios           from "axios";
 import "./PerfilUsuario.css";
-import linkedinIcon from "../assets/Linkedin.svg";
-import facebookIcon from "../assets/facebook.svg";
+
+import linkedinIcon  from "../assets/Linkedin.svg";
+import facebookIcon  from "../assets/facebook.svg";
 import instagramIcon from "../assets/insta.svg";
-import xIcon from "../assets/x.svg";
-import whatsappIcon from "../assets/Whats.svg";
-import emailIcon from "../assets/Mail.svg";
+import xIcon         from "../assets/x.svg";
+import whatsappIcon  from "../assets/Whats.svg";
+import emailIcon     from "../assets/Mail.svg";
+
+import { Card, Row, Col, Button, Spinner } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap-icons/font/bootstrap-icons.css";
-import { Card, Row, Col, Button } from "react-bootstrap";
 
-const Perfil = () => {
-    const [usuario, setUsuario] = useState({});
-    const navigate = useNavigate();
+import { AuthContext } from "../Components/AuthContext";
 
-    useEffect(() => {
-        const fetchUsuario = async () => {
-            const idUsuario = localStorage.getItem("idUsuario");
-            if (!idUsuario) {
-                alert("No se encontró el ID del usuario. Por favor, inicia sesión.");
-                navigate("/");
-                return;
-            }
+/* ------------- CONFIG AXIOS ------------- */
+axios.defaults.baseURL        = "http://localhost/alepirea/";
+axios.defaults.withCredentials = true;
 
-            try {
-                const response = await axios.post(
-                    "http://localhost/alepirea/GetUsuario.php",
-                    { idUsuario },
-                    { headers: { "Content-Type": "application/json" } }
-                );
+export default function Perfil() {
+  const navigate          = useNavigate();
+  const { user }          = useContext(AuthContext);
+  const [perfil, setPerfil] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-                if (response.data?.status === "success" && response.data.data) {
-                    setUsuario(prevState =>
-                        JSON.stringify(prevState) !== JSON.stringify(response.data.data)
-                            ? response.data.data
-                            : prevState
-                    );
-                } else {
-                    alert(response.data?.message || "No se encontraron datos para este usuario.");
-                    navigate("/");
-                }
-            } catch (error) {
-                console.error("Error al obtener los datos del usuario:", error);
-                alert("Hubo un problema al cargar los datos del perfil.");
-                navigate("/");
-            }
-        };
+  /* ---------- Cargar perfil al montar ---------- */
+  useEffect(() => {
+    const id = user?.ID_Usuario || localStorage.getItem("idUsuario");
+    if (!id) {
+      alert("No se encontró un usuario válido. Inicia sesión.");
+      navigate("/");
+      return;
+    }
 
-        fetchUsuario();
-    }, [navigate]);
+    axios.get("GetUsuario.php?id=" + id)
+      .then(r => {
+        if (r.data.status === "success") {
+          setPerfil(r.data.data);
+        } else {
+          alert(r.data.message || "No se encontraron datos.");
+          navigate("/");
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        alert("Error al cargar el perfil.");
+        navigate("/");
+      })
+      .finally(() => setLoading(false));
+  }, [user, navigate]);
 
+  if (loading)
     return (
-        <div className="perfil-container">
-            <header className="perfil-header">
-                <img
-                    src={usuario.imagenPerfil || ""}
-                    alt={`${usuario.nombre || "Usuario"} ${usuario.apellidoPaterno || ""}`}
-                    className="perfil-imagen"
-                />
-                <h2>
-                    {usuario.nombre || "Sin nombre"} {usuario.apellidoPaterno || ""} {usuario.apellidoMaterno || ""}
-                </h2>
-                <p className="perfil-profesion">{usuario.profesion || "Profesión no especificada"}</p>
-            </header>
-
-            <div className="profile-container">
-                <Row className="mb-4">
-                    <Col md={4}>
-                        <Card>
-                            <Card.Body className="contact-info">
-                                <Card.Title className="text-uppercase">Datos de Contacto</Card.Title>
-                                <p><strong>Teléfono:</strong> {usuario.telefono || "No proporcionado"}</p>
-                                <p><strong>Ubicación:</strong> {usuario.ubicacion || "No proporcionada"}</p>
-                                <p><strong>Cédula Profesional:</strong> {usuario.cedulaProfesional || "No proporcionada"}</p>
-                                <Button variant="outline-light" className="mb-2 w-100">
-                                    <img src={emailIcon} alt="Correo" /> Contactar por correo
-                                </Button>
-                                <Button variant="outline-light" className="w-100">
-                                    <img src={whatsappIcon} alt="WhatsApp" /> Contactar por WhatsApp
-                                </Button>
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                    <Col md={8}>
-                        <Card>
-                            <Card.Body>
-                                <Row>
-                                    <Col md={6} className="border-right">
-                                        <Card.Title className="text-uppercase">Especialidades</Card.Title>
-                                        <p>{usuario.especialidad || "No especificada"}</p>
-                                    </Col>
-                                    <Col className="pip" md={6}>
-                                        <Card.Title className="text-uppercase">Estudios y Certificaciones</Card.Title>
-                                        <p><strong>Universidad:</strong> {usuario.universidad || "No especificada"}</p>
-                                        <p><strong>Idiomas:</strong> {Array.isArray(usuario.idiomas) ? usuario.idiomas.join(", ") : usuario.idiomas || "No especificados"}</p>
-                                        <p><strong>Certificaciones:</strong> {Array.isArray(usuario.certificaciones) ? usuario.certificaciones.join(", ") : usuario.certificaciones || "No especificadas"}</p>
-                                    </Col>
-                                </Row>
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                </Row>
-            </div>
-
-            <div className="profile-section work-experience">
-                <h3>Experiencia Laboral</h3>
-                <p>{usuario.experienciaLaboral || "No especificada"}</p>
-            </div>
-
-            <div className="profile-section fees">
-                <h3>Honorarios</h3>
-                <p>{usuario.honorarios ? `$${usuario.honorarios} MXN por hora` : "No especificados"}</p>
-            </div>
-
-            <div className="profile-section social-media">
-                <h3>Redes Sociales</h3>
-                <div className="social-icons">
-                    {usuario.linkedin && <a href={usuario.linkedin}><img src={linkedinIcon} alt="LinkedIn" /></a>}
-                    {usuario.facebook && <a href={usuario.facebook}><img src={facebookIcon} alt="Facebook" /></a>}
-                    {usuario.instagram && <a href={usuario.instagram}><img src={instagramIcon} alt="Instagram" /></a>}
-                    {usuario.x && <a href={usuario.x}><img src={xIcon} alt="X" /></a>}
-                </div>
-            </div>
-
-            <div className="profile-section reviews">
-                <h3>Valoraciones</h3>
-                {[{ nombre: "Ernesto Vega", fecha: "02/07/24", comentario: "Emiliano es un abogado excepcional, muy comprometido y con amplios conocimientos en su área.", estrellas: 5 },
-                { nombre: "Anónimo", fecha: "02/07/24", comentario: "Gracias a Emiliano, nuestra empresa ha resuelto todos sus problemas legales de manera eficiente.", estrellas: 4 }]
-                    .map((review, index) => (
-                        <Card key={index} className="review-card">
-                            <Card.Body>
-                                <h5>{review.nombre} - {review.fecha}</h5>
-                                <p>{review.comentario}</p>
-                                <div className="stars">{"⭐".repeat(review.estrellas)}</div>
-                            </Card.Body>
-                        </Card>
-                    ))}
-            </div>
-        </div>
+      <div className="d-flex justify-content-center align-items-center" style={{height:"50vh"}}>
+        <Spinner animation="border" />
+      </div>
     );
-};
 
-export default Perfil;
+  if (!perfil) return null;   // ya se manejó el error arriba
+
+  /* ---------- Helpers ---------- */
+  const imgURL = perfil.imagenPerfil || "";
+  const fullName = `${perfil.nombreVisible || perfil.nombreCuenta || ""} ${perfil.apellidoP || ""} ${perfil.apellidoM || ""}`;
+  const idiomas  = Array.isArray(perfil.Idiomas) ? perfil.Idiomas.join(", ") : (perfil.Idiomas || "No especificados");
+  const certific = Array.isArray(perfil.Certificaciones) ? perfil.Certificaciones.join(", ") : (perfil.Certificaciones || "No especificadas");
+
+  return (
+    <div className="perfil-container">
+      {/* ---------- Encabezado ---------- */}
+      <header className="perfil-header">
+        <img src={imgURL} alt={fullName} className="perfil-imagen"/>
+        <h2>{fullName.trim() || "Sin nombre"}</h2>
+        <p className="perfil-profesion">{perfil.profesion || "Profesión no especificada"}</p>
+      </header>
+
+      {/* ---------- Tarjetas principales ---------- */}
+      <div className="profile-container">
+        <Row className="mb-4">
+          {/* Contacto */}
+          <Col md={4}>
+            <Card>
+              <Card.Body className="contact-info">
+                <Card.Title className="text-uppercase">Datos de Contacto</Card.Title>
+
+                <p><strong>Teléfono:</strong> {perfil.telefono || "No proporcionado"}</p>
+                <p><strong>Ubicación:</strong> {perfil.Ubicacion || "No proporcionada"}</p>
+                <p><strong>Cédula profesional:</strong> {perfil.CedulaProfesional || "No proporcionada"}</p>
+
+                <Button variant="outline-light" className="mb-2 w-100">
+                  <img src={emailIcon} alt="Correo"/>  Contactar por correo
+                </Button>
+                <Button variant="outline-light" className="w-100">
+                  <img src={whatsappIcon} alt="WhatsApp"/>  Contactar por WhatsApp
+                </Button>
+              </Card.Body>
+            </Card>
+          </Col>
+
+          {/* Especialidad + Estudios */}
+          <Col md={8}>
+            <Card>
+              <Card.Body>
+                <Row>
+                  <Col md={6} className="border-right">
+                    <Card.Title className="text-uppercase">Especialidades</Card.Title>
+                    <p>{perfil.especialidad || "No especificada"}</p>
+                  </Col>
+                  <Col md={6}>
+                    <Card.Title className="text-uppercase">Estudios y Certificaciones</Card.Title>
+                    <p><strong>Universidad:</strong> {perfil.UniversidadEgreso || "No especificada"}</p>
+                    <p><strong>Idiomas:</strong> {idiomas}</p>
+                    <p><strong>Certificaciones:</strong> {certific}</p>
+                  </Col>
+                </Row>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </div>
+
+      {/* ---------- Secciones adicionales ---------- */}
+      <Section title="Experiencia laboral">{perfil.ExperienciaLaboral || "No especificada"}</Section>
+
+      <Section title="Honorarios">
+        {perfil.Honorarios ? `$${perfil.Honorarios} MXN por hora` : "No especificados"}
+      </Section>
+
+      <Section title="Redes sociales">
+        <div className="social-icons">
+          {perfil.linkedin  && <a href={perfil.linkedin}><img src={linkedinIcon}  alt="LinkedIn"/></a>}
+          {perfil.facebook  && <a href={perfil.facebook}><img src={facebookIcon}  alt="Facebook"/></a>}
+          {perfil.instagram && <a href={perfil.instagram}><img src={instagramIcon} alt="Instagram"/></a>}
+          {perfil.x         && <a href={perfil.x}><img src={xIcon}         alt="X"/></a>}
+        </div>
+      </Section>
+
+      {/* Ejemplo de valoraciones dummy (puedes conectar a BD después) */}
+      <Section title="Valoraciones">
+        {[
+          { nombre:"Ernesto Vega", fecha:"02/07/24", comentario:"Servicio excepcional.", estrellas:5 },
+          { nombre:"Anónimo",      fecha:"02/07/24", comentario:"Muy profesional.",       estrellas:4 }
+        ].map((rev,i)=>(
+          <Card key={i} className="review-card mb-2">
+            <Card.Body>
+              <h5>{rev.nombre} - {rev.fecha}</h5>
+              <p>{rev.comentario}</p>
+              <div className="stars">{"⭐".repeat(rev.estrellas)}</div>
+            </Card.Body>
+          </Card>
+        ))}
+      </Section>
+    </div>
+  );
+}
+
+/* ---------- Tiny helper component ---------- */
+function Section({ title, children }) {
+  return (
+    <div className="profile-section my-3">
+      <h3>{title}</h3>
+      {children}
+    </div>
+  );
+}

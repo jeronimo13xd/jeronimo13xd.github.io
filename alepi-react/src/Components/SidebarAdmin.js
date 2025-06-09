@@ -1,33 +1,46 @@
-import { NavLink } from 'react-router-dom';
-import { useContext } from 'react';
-import { AuthContext } from './AuthContext';
-import './AppSidebar.css';   // debe apuntar a este archivo
+// src/Components/SidebarAdmin.js
+import { NavLink }      from 'react-router-dom';
+import { useContext }   from 'react';
+import { AuthContext }  from './AuthContext';
+import './AppSidebar.css';      // deja tu mismo css
 
+/* ───── Menús mínimos por rol ───── */
+const MENUS = {
+  sistema: [
+    { label:'Dashboard', to:'/dashboard/super', permiso:'dashboard:read' },
+    { label:'Roles',     to:'/roles',           permiso:'roles:read'     },
+    { label:'Usuarios',  to:'/usuarios',        permiso:'usuarios:read' }
+  ],
 
-const menuConfig = [
-  { label:'Dashboard',           to:'/dashboard',     permiso:'reportes:read' },
-  { label:'Usuarios',            to:'/usuarios',      permiso:'usuarios:read' },
-  { label:'Profesionales',       to:'/profesionales', permiso:'profesionales:read' },
-  { label:'Artículos',           to:'/articulos',     permiso:'articulos:read' },
-  { label:'Videos',              to:'/videos',        permiso:'videos:read' },
-  { label:'Suscripciones',       to:'/suscripciones', permiso:'suscripciones:read' },
-  { label:'Pagos & Facturas',    to:'/pagos',         permiso:'pagos:read' },
-  { label:'Cupones',             to:'/cupones',       permiso:'cupones:read' },
-  { label:'Configuración',       to:'/config',        permiso:'configuracion:update' }
-];
+  negocio: [
+    { label:'Dashboard',      to:'/dashboard/negocio',  permiso:'dashboard:read'              },
+    { label:'Aprobaciones',   to:'/contenido/pending',  permiso:'contenido:approve'          },
+    { label:'Suscripciones',  to:'/suscripciones',      permiso:'suscripciones:read'         },
+    { label:'Pagos',          to:'/pagos',              permiso:'pagos:read'                 }
+  ],
+
+  ventas: [
+    { label:'Dashboard',     to:'/dashboard/ventas',   permiso:'dashboard:read'         },
+    { label:'Alta Profes.',  to:'/profesionales/new',  permiso:'profesionales:create'   },
+    { label:'KPIs',          to:'/kpi',                permiso:'reportes:read'          }
+  ]
+};
 
 export default function SidebarAdmin(){
   const { user } = useContext(AuthContext);
-  if (!user || !user.permisos) return null;
+  if (!user) return null;
+
+  // “rol” viene de backend en minúsculas (“sistema”, “negocio”…)
+  const items = MENUS[user.rol] ?? [];
 
   return (
     <aside className="sidebar bg-light p-3">
-      <ul className="list-unstyled">
-        {menuConfig.map(item => (
-          user.permisos.includes(item.permiso) && (
-            <li key={item.to} className="mb-2">
-              <NavLink to={item.to} className="text-decoration-none">
-                {item.label}
+      <ul className="list-unstyled m-0">
+        {items.map(i => (
+          user.permisos.includes(i.permiso) && (
+            <li key={i.to} className="mb-2">
+              <NavLink to={i.to} className="text-decoration-none">
+                {i.label}
               </NavLink>
             </li>
           )

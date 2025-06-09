@@ -1,20 +1,28 @@
-import { useContext } from 'react';
-import { AuthContext } from './AuthContext';
-import { Navigate } from 'react-router-dom';
+// src/Components/RutaProtegida.jsx
+import React from "react";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "./AuthContext";
 
-const RutaProtegida = ({ permisoRequerido, children }) => {
-  const { user } = useContext(AuthContext);
+export default function RutaProtegida({ permisoRequerido, children }) {
+  const { user } = useAuth();
 
-  // Si no hay sesión, manda a login
-  if (!user) return <Navigate to="/login" replace />;
-
-  // Si no tiene el permiso requerido, redirige a /SinAcceso
-  if (permisoRequerido && !user.permisos.includes(permisoRequerido)) {
-    return <Navigate to="/SinAcceso" replace />;
+  // Si no hay usuario, redirige al login
+  if (!user) {
+    return <Navigate to="/login" replace />;
   }
 
-  // Tiene permiso → renderiza la ruta protegida
-  return children;
-};
+  // Si no se exige permiso, simplemente se permite
+  if (!permisoRequerido) {
+    return children;
+  }
 
-export default RutaProtegida;
+  // Comprobamos si el array `user.permisos` incluye el permiso
+  const tienePermiso =
+    Array.isArray(user.permisos) && user.permisos.includes(permisoRequerido);
+
+  if (!tienePermiso) {
+    return <Navigate to="/sin-acceso" replace />;
+  }
+
+  return children;
+}
