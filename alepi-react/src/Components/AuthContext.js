@@ -4,19 +4,16 @@ import React, { createContext, useState, useEffect, useContext } from "react";
 export const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-
-  // Al montar, cargo el usuario desde localStorage
-  useEffect(() => {
+  // ① Cargar de localStorage en la *creación* del estado (lazy init)
+  const [user, setUser] = useState(() => {
     try {
       const stored = localStorage.getItem("alepi_user");
-      if (stored) {
-        setUser(JSON.parse(stored));
-      }
+      return stored ? JSON.parse(stored) : null;
     } catch {
-      // nada
+      return null;
     }
-  }, []);
+ });
+
 
   function login(u) {
     setUser(u);

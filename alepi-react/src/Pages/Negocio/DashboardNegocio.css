@@ -1,0 +1,33 @@
+/* contenedor */
+.neg-dashboard {
+  min-height: 55vh;
+}
+
+/* tarjeta base */
+.kpi-card{
+  color:#fff;
+  border:none;
+  border-radius:12px;
+  box-shadow:0 4px 14px rgba(0,0,0,.12);
+  transition:transform .18s;
+}
+.kpi-card:hover{transform:translateY(-4px);}
+
+/* titulo y valor */
+.kpi-title{
+  font-size:.95rem;
+  font-weight:600;
+  letter-spacing:.3px;
+  margin-bottom:.35rem;
+  text-transform:uppercase;
+}
+.kpi-value{
+  font-size:2.4rem;
+  font-weight:700;
+}
+
+/* gradientes corporativos ALEPI */
+.kpi-activos  {background:linear-gradient(135deg,#0d47a1,#1565c0);}
+.kpi-aprob    {background:linear-gradient(135deg,#424242,#616161);}
+.kpi-subs     {background:linear-gradient(135deg,#1e3c72,#2a5298);}
+.kpi-ingresos {background:linear-gradient(135deg,#00695c,#00897b);}

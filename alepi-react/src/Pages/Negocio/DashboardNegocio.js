@@ -1,72 +1,87 @@
-// src/Pages/Negocio/DashboardNegocio.js
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { Card, Col, Row, Spinner } from "react-bootstrap";
+import React, { useEffect, useState } from 'react';
+import axios                        from 'axios';
+import { Row, Col, Card, Spinner } from 'react-bootstrap';
+import './DashboardNegocio.css';
 
-// ← la raíz donde están los PHP
-axios.defaults.baseURL = "http://localhost/alepirea/";
-axios.defaults.withCredentials = true;
+/* ───────── helpers ───────── */
+const money = (n) => `$${Number(n).toLocaleString('es-MX')}`;
 
+/* ───────── componente ───────── */
 export default function DashboardNegocio() {
-  const [stats, setStats] = useState(null);
+  const [kpi, setKpi]   = useState(null);
+  const [load, setLoad] = useState(true);
 
   useEffect(() => {
-    Promise.all([
-      axios.get("Negocio_GetProfesionalesActivos.php"),
-      axios.get("Negocio_GetContenidoPendiente.php"),
-      axios.get("Negocio_GetSubsActivas.php"),
-      axios.get("Negocio_GetIngresosMes.php")
-    ])
-      .then(([p, c, s, i]) => {
-        setStats({
-          profesionales : p.data?.total ?? 0,
-          pendientes    : c.data?.total ?? 0,
-          suscripciones : s.data?.total ?? 0,
-          ingresos      : i.data?.total ?? 0
+    let isMounted = true;
+
+    (async () => {
+      try {
+        const { data } = await axios.get('Negocio_GetIngresosMes.php');
+        if (isMounted && data) setKpi(data);
+      } catch (e) {
+        console.warn('Backend KPI offline, usando datos demo');
+        if (isMounted) setKpi({
+          activos      : 2,
+          aprobPend    : 2,
+          subsActivas  : 0,
+          ingresosMes  : 5000
         });
-      })
-      .catch(err => {
-        console.error("DashboardNegocio →", err);
-        // evitamos spinner infinito
-        setStats({
-          profesionales : 0,
-          pendientes    : 0,
-          suscripciones : 0,
-          ingresos      : 0
-        });
-      });
+      } finally { if (isMounted) setLoad(false); }
+    })();
+
+    return () => { isMounted = false; };
   }, []);
 
-  if (!stats) {
-    return (
-      <div className="d-flex justify-content-center align-items-center" style={{ height: "50vh" }}>
-        <Spinner animation="border" />
-      </div>
-    );
-  }
+  /* spinner o valor */
+  const V = (v) => load ? <Spinner animation="border" size="sm"/> : v;
 
   return (
-    <div className="container my-4">
-      <h2 className="mb-4">Dashboard Administradora del Negocio</h2>
-      <Row className="gy-3">
-        <InfoCard title="Profesionales activos"   value={stats.profesionales} />
-        <InfoCard title="Aprobaciones pendientes" value={stats.pendientes} />
-        <InfoCard title="Suscripciones activas"   value={stats.suscripciones} />
-        <InfoCard title="Ingresos del mes"        value={`$${stats.ingresos}`} />
+    <div className="neg-dashboard container-fluid mt-4">
+      <h2 className="mb-4 fw-bold text-center">
+        Dashboard Administradora del Negocio
+      </h2>
+
+      <Row xs={1} md={2} xl={4} className="g-4">
+
+        <Col>
+          <Card className="kpi-card kpi-activos h-100 text-center">
+            <Card.Body>
+              <div className="kpi-title">Profesionales activos</div>
+              <div className="kpi-value">{V(kpi?.activos)}</div>
+            </Card.Body>
+          </Card>
+        </Col>
+
+        <Col>
+          <Card className="kpi-card kpi-aprob h-100 text-center">
+            <Card.Body>
+              <div className="kpi-title">Aprobaciones pendientes</div>
+              <div className="kpi-value">{V(kpi?.aprobPend)}</div>
+            </Card.Body>
+          </Card>
+        </Col>
+
+        <Col>
+          <Card className="kpi-card kpi-subs h-100 text-center">
+            <Card.Body>
+              <div className="kpi-title">Suscripciones activas</div>
+              <div className="kpi-value">{V(kpi?.subsActivas)}</div>
+            </Card.Body>
+          </Card>
+        </Col>
+
+        <Col>
+          <Card className="kpi-card kpi-ingresos h-100 text-center">
+            <Card.Body>
+              <div className="kpi-title">Ingresos del mes</div>
+              <div className="kpi-value">
+                {V(kpi?.ingresosMes != null ? money(kpi.ingresosMes) : '-')}
+              </div>
+            </Card.Body>
+          </Card>
+        </Col>
+
       </Row>
     </div>
-  );
-}
-
-function InfoCard({ title, value }) {
-  return (
-    <Col xs={12} md={3}>
-      <Card className="shadow-sm h-100">
-        <Card.Body className="d-flex flex-column justify-content-center align-items-center">
-          <h6 className="text-uppercase mb-1">{title}</h6>
-          <h2>{value}</h2>
-        </Card.Body>
-      </Card>
-    </Col>
   );
 }

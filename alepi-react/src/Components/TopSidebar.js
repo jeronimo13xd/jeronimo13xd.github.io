@@ -1,94 +1,127 @@
-// src/Components/TopSidebar.jsx
-import React, { useContext } from "react";
-import { Link } from "react-router-dom";
-import {
-  Container,
-  Nav,
-  Navbar,
-  Offcanvas,
-} from "react-bootstrap";
-import "bootstrap/dist/css/bootstrap.min.css";
+import React, { useContext } from 'react';
+import { Link } from 'react-router-dom';
+import { Container, Nav, Navbar, Offcanvas } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-import logo   from "../assets/logo.svg";
-import Sobre  from "../assets/Sobre.svg";
-import IniSes from "../assets/IconIniSes.svg";
-import Susc   from "../assets/Susc.svg";
+import logo   from '../assets/logo.svg';
+import Sobre  from '../assets/Sobre.svg';
+import IniSes from '../assets/IconIniSes.svg';
+import Susc   from '../assets/Susc.svg';
 
-import { AuthContext } from "./AuthContext";
-import "./TopSidebar.css";
+import { AuthContext } from './AuthContext';
+import './TopSidebar.css';
 
-/* ─────────────────────────  Sidebars por rol  ───────────────────────── */
-
+/* ----------  INVITADO  ---------- */
 const SidebarGuest = () => (
   <>
-    <Nav.Item className="InicSes">
-      <img src={IniSes} alt="" className="nav-icon" />
-      <Link to="/login" className="nav-link">Inicia Sesión</Link>
-    </Nav.Item>
-
-    <Nav.Item className="SobrePag">
-      <img src={Sobre} alt="" className="nav-icon" />
-      <Link to="/PregFrec" className="nav-link">Sobre la Página</Link>
-    </Nav.Item>
-
-    <Nav.Item className="Susc">
-      <img src={Susc} alt="" className="nav-icon" />
-      <Link to="/Suscripcion" className="nav-link">Únete a ALEPI</Link>
+    <Nav.Item>
+      <Link to="/login" className="nav-link d-flex align-items-center gap-2">
+        <img src={IniSes} alt="" className="nav-icon" />
+        <span>Inicia Sesión</span>
+      </Link>
     </Nav.Item>
 
     <Nav.Item>
-      <Link to="/Info" className="nav-link">Conoce ALEPI</Link>
+      <Link to="/pregfrec" className="nav-link d-flex align-items-center gap-2">
+        <img src={Sobre} alt="" className="nav-icon" />
+        <span>Sobre la Página</span>
+      </Link>
+    </Nav.Item>
+
+    <Nav.Item>
+      <Link to="/suscripcion" className="nav-link d-flex align-items-center gap-2">
+        <img src={Susc} alt="" className="nav-icon" />
+        <span>Únete a ALEPI</span>
+      </Link>
+    </Nav.Item>
+
+    <Nav.Item>
+      <Link to="/info" className="nav-link d-flex align-items-center gap-2">
+        <i className="bi bi-info-circle nav-icon" />
+        <span>Conoce ALEPI</span>
+      </Link>
     </Nav.Item>
   </>
 );
 
-/* ───── SUPERADMIN / SISTEMA ───── */
+/* ----------  PROFESIONAL / CLIENTE  ---------- */
+const SidebarProfesional = ({ logout }) => (
+  <>
+    <Nav.Item><Link to="/perfil"           className="nav-link">Mi Perfil</Link></Nav.Item>
+    <Nav.Item><Link to="/notificaciones"   className="nav-link">Notificaciones</Link></Nav.Item>
+    <Nav.Item><Link to="/articulosu"       className="nav-link">Artículos</Link></Nav.Item>
+    <Nav.Item><Link to="/videosu"          className="nav-link">Videos</Link></Nav.Item>
+    <Nav.Item><Link to="/info"             className="nav-link">Sobre la página</Link></Nav.Item>
+    <Nav.Item><Link to="/configuracionu"   className="nav-link">Configuración</Link></Nav.Item>
+    <Nav.Item>
+      <button onClick={logout} className="nav-link btn btn-link">Cerrar Sesión</button>
+    </Nav.Item>
+  </>
+);
+
+/* ----------  SUPER-ADMIN / SISTEMA  ---------- */
 const SidebarSuper = ({ logout }) => (
   <>
     <Nav.Item><Link to="/dashboard/super" className="nav-link">Dashboard</Link></Nav.Item>
     <Nav.Item><Link to="/roles"           className="nav-link">Roles</Link></Nav.Item>
     <Nav.Item><Link to="/usuarios"        className="nav-link">Usuarios</Link></Nav.Item>
-    <Nav.Item><button onClick={logout} className="nav-link btn btn-link">Cerrar Sesión</button></Nav.Item>
+    <Nav.Item>
+      <button onClick={logout} className="nav-link btn btn-link">Cerrar Sesión</button>
+    </Nav.Item>
   </>
 );
 
-/* ───── NEGOCIO ───── */
+/* ----------  NEGOCIO  ---------- */
 const SidebarNegocio = ({ logout }) => (
   <>
     <Nav.Item><Link to="/dashboard/negocio" className="nav-link">Dashboard</Link></Nav.Item>
-    {/* Ruta al listado de aprobaciones */}
     <Nav.Item><Link to="/aprobaciones"       className="nav-link">Aprobaciones</Link></Nav.Item>
     <Nav.Item><Link to="/suscripciones"      className="nav-link">Suscripciones</Link></Nav.Item>
     <Nav.Item><Link to="/pagos"              className="nav-link">Pagos</Link></Nav.Item>
-    <Nav.Item><button onClick={logout} className="nav-link btn btn-link">Cerrar Sesión</button></Nav.Item>
+    <Nav.Item>
+      <button onClick={logout} className="nav-link btn btn-link">Cerrar Sesión</button>
+    </Nav.Item>
   </>
 );
 
-/* ───── VENTAS ───── */
+/* ----------  VENTAS  ---------- */
 const SidebarVentas = ({ logout }) => (
   <>
-    <Nav.Item><Link to="/dashboard/ventas"  className="nav-link">Dashboard</Link></Nav.Item>
-    <Nav.Item><Link to="/profesionales/new" className="nav-link">Alta Profesionales</Link></Nav.Item>
-    <Nav.Item><Link to="/kpi"               className="nav-link">KPIs</Link></Nav.Item>
-    <Nav.Item><button onClick={logout} className="nav-link btn btn-link">Cerrar Sesión</button></Nav.Item>
+    <Nav.Item><Link to="/dashboard/ventas" className="nav-link">Dashboard</Link></Nav.Item>
+
+    <Nav.Item><Link to="/ventas/usuarios" className="nav-link">Profesionales</Link></Nav.Item>
+    <Nav.Item className="ps-3"><Link to="/ventas/usuarios/nuevo" className="nav-link">➕ Alta profesional</Link></Nav.Item>
+
+    <Nav.Item><Link to="/ventas/suscripciones" className="nav-link">Suscripciones</Link></Nav.Item>
+    <Nav.Item className="ps-3"><Link to="/ventas/suscripciones/nuevo" className="nav-link">➕ Nueva suscripción</Link></Nav.Item>
+
+    <Nav.Item><Link to="/ventas/pagos"    className="nav-link">Pagos</Link></Nav.Item>
+    <Nav.Item><Link to="/ventas/cupones"  className="nav-link">Cupones</Link></Nav.Item>
+    <Nav.Item><Link to="/ventas/reportes" className="nav-link">Reportes</Link></Nav.Item>
+    <Nav.Item><Link to="/ventas/notificacion/nueva" className="nav-link">Nueva notificación</Link></Nav.Item>
+
+    <Nav.Item>
+      <button onClick={logout} className="nav-link btn btn-link">Cerrar Sesión</button>
+    </Nav.Item>
   </>
 );
 
-/* ─────────────────────────  Topbar principal  ───────────────────────── */
-
+/* ----------  TOPBAR PRINCIPAL  ---------- */
 export default function Topbar() {
   const { user, logout } = useContext(AuthContext);
 
   const renderSidebar = () => {
     if (!user) return <SidebarGuest />;
 
-    // Normalizamos el nombre del rol
-    const rol = (user.rol || "").toString().trim().toLowerCase();
+    /* normalizamos */
+    const rol = (user.rol || user.TipoUsuario || '').toString().trim().toLowerCase();
 
-    if (rol === "sistema" || rol === "superadmin") return <SidebarSuper  logout={logout} />;
-    if (rol === "negocio")                         return <SidebarNegocio logout={logout} />;
-    if (rol === "ventas")                          return <SidebarVentas  logout={logout} />;
+    if (rol === 'sistema' || rol === 'superadmin') return <SidebarSuper  logout={logout} />;
+    if (rol === 'negocio')                         return <SidebarNegocio logout={logout} />;
+    if (rol === 'ventas')                          return <SidebarVentas  logout={logout} />;
+    if (rol === 'cliente')                         return <SidebarProfesional logout={logout} />;
 
+    /* fallback */
     return <SidebarGuest />;
   };
 
@@ -100,12 +133,13 @@ export default function Topbar() {
         </Navbar.Brand>
 
         <Nav className="Arriba mx-auto custom-nav d-flex flex-row align-items-center">
-          <Nav.Link as={Link} to="/Directorio">Directorio</Nav.Link>
-          <Nav.Link as={Link} to="/Articulos">Artículos</Nav.Link>
-          <Nav.Link as={Link} to="/Videos">Videos</Nav.Link>
+          <Nav.Link as={Link} to="/directorio">Directorio</Nav.Link>
+          <Nav.Link as={Link} to="/articulos">Artículos</Nav.Link>
+          <Nav.Link as={Link} to="/videos">Videos</Nav.Link>
         </Nav>
 
         <Navbar.Toggle aria-controls="offcanvasNavbar" />
+
         <Navbar.Offcanvas id="offcanvasNavbar" placement="end">
           <Offcanvas.Header closeButton>
             <Offcanvas.Title>
