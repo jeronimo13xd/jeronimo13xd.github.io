@@ -1,94 +1,218 @@
 import React from 'react';
-import './Pasos.css';
-import { Link } from 'react-router-dom';
-import './Footer.css';
-import logo from 'C:/xampp/htdocs/alepirea/alepi-react/src/assets/logo.svg';
-import linkedinIcon from 'C:/xampp/htdocs/alepirea/alepi-react/src/assets/Linkedin.svg';
-import youtubeIcon from 'C:/xampp/htdocs/alepirea/alepi-react/src/assets/youtube.svg';
-import facebookIcon from 'C:/xampp/htdocs/alepirea/alepi-react/src/assets/facebook.svg';
-import tiktokIcon from 'C:/xampp/htdocs/alepirea/alepi-react/src/assets/tiktok.svg';
-import xIcon from 'C:/xampp/htdocs/alepirea/alepi-react/src/assets/x.svg';
-import instagramIcon from 'C:/xampp/htdocs/alepirea/alepi-react/src/assets/insta.svg';
+import './Paso5.css';
 
-const Paso5 = ({ prevStep, handleSubmit, datos }) => {
+const Paso5 = ({ prevStep, handleSubmit, datos, isSubmitting }) => {
     return (
-        <>
-            <div className='contenedorAzul'>
-                <div className="importante">
-                    <h2>¡IMPORTANTE!</h2>
-                    <p>Si se ingresan datos falsos, no habrá devolución de dinero. Verifique su información antes de enviarla.</p>
-                    <p>Gracias por su comprensión. ALEPI</p>
-                </div>
-
-                <div className="containerReg mt-5">
-                    <h2 className="font-weight-bold">Confirmar Datos</h2>
-                    <hr style={{ border: "1px solid #007bff", width: "150px" }} />
-                    <div className="datos-confirmacion">
-                        <h4>Datos Personales:</h4>
-                        <p><strong>Nombre(s):</strong> {datos.nombre || 'No proporcionado'}</p>
-                        <p><strong>Apellido Paterno:</strong> {datos.apellidoPaterno || 'No proporcionado'}</p>
-                        <p><strong>Apellido Materno:</strong> {datos.apellidoMaterno || 'No proporcionado'}</p>
-                        <p><strong>Fecha de Nacimiento:</strong> {`${datos.dia || 'D'}/${datos.mes || 'M'}/${datos.ano || 'A'}`}</p>
-                        <p><strong>Género:</strong> {datos.genero || 'No proporcionado'}</p>
-                        <p><strong>Teléfono:</strong> {`(${datos.codigoArea || 'XXX'}) ${datos.telefono || 'XXXXXXXXXX'}`}</p>
-                        <p><strong>Dirección:</strong> {`${datos.calle || 'No proporcionado'}, Número ${datos.numero || 'No proporcionado'}, Interior: ${datos.interior || 'No proporcionado'}, CP: ${datos.codigoPostal || 'No proporcionado'}, Alcaldía: ${datos.alcaldia || 'No proporcionado'}, Estado: ${datos.estado || 'No proporcionado'}`}</p>
-
-                        <h4>Datos Profesionales:</h4>
-                        <p><strong>Universidad:</strong> {datos.universidad || 'No proporcionado'}</p>
-                        <p><strong>Licenciatura:</strong> {datos.licenciatura || 'No proporcionado'}</p>
-                        <p><strong>Cédula Profesional:</strong> {datos.cedulaProfesional || 'No proporcionado'}</p>
-                        <p><strong>Especialidades:</strong> {datos.especialidades || 'No proporcionado'}</p>
-                        <p><strong>Certificaciones:</strong> {datos.certificaciones || 'No proporcionado'}</p>
-
-                        <h4>Datos Laborales:</h4>
-                        <p><strong>Experiencia Laboral:</strong> {datos.experienciaLaboral || 'No proporcionado'}</p>
-                        <p><strong>Monto de Asesoría:</strong> {datos.montoAsesoria || 'No proporcionado'} MXN</p>
-
-                        <h4>Idiomas:</h4>
-                        {datos.idiomas && datos.idiomas.length > 0 ? (
-                            <ul>
-                                {datos.idiomas.map((idioma, index) => (
-                                    <li key={index}>{idioma}</li>
-                                ))}
-                            </ul>
-                        ) : (
-                            <p>No se seleccionaron idiomas.</p>
-                        )}
-
-                        {datos.idiomas && datos.idiomas.includes("Otros") && (
-                            <p><strong>Otros Idiomas:</strong> {datos.otrosIdiomas || 'No especificado'}</p>
-                        )}
-
-                        <h4>Datos de Contacto:</h4>
-                        <p><strong>LinkedIn:</strong> {datos.linkedin || 'No proporcionado'}</p>
-                        <p><strong>Facebook:</strong> {datos.facebook || 'No proporcionado'}</p>
-                        <p><strong>Instagram:</strong> {datos.instagram || 'No proporcionado'}</p>
-                        <p><strong>X:</strong> {datos.x || 'No proporcionado'}</p>
-                        <p><strong>Correo Electrónico de Contacto:</strong> {datos.correoContacto || 'No proporcionado'}</p>
-                        <p><strong>WhatsApp:</strong> {datos.whatsapp || 'No proporcionado'}</p>
+        <div className="paso5-wrapper">
+            <div className="paso5-container">
+                {/* Fondo azul */}
+                <div className="azul-background"></div>
+                
+                {/* Contenido principal */}
+                <div className="paso5-content">
+                    
+                    {/* Header */}
+                    <div className="paso5-header">
+                        <h2>CONFIRMAR DATOS</h2>
+                        <p>Paso 6 de 6 - Revise y confirme su información</p>
+                        
+                        <div className="progress-container">
+                            <div className="progress">
+                                <div className="progress-bar" role="progressbar" style={{width: '100%'}}></div>
+                            </div>
+                            <div className="progress-text">Progreso: 100%</div>
+                        </div>
                     </div>
 
-                    <div className="d-flex justify-content-between mt-4">
-                        <button type="button" className="btn btn-secondary" onClick={prevStep}>
-                            &larr; Anterior
-                        </button>
-                        <button type="button" className="btn btn-success" onClick={(e) => {
-                            e.preventDefault();
-                            handleSubmit();
-                        }}>
-                            Confirmar y Finalizar
-                        </button>
+                    {/* Alerta importante */}
+                    <div className="alert-important">
+                        <i className="bi bi-exclamation-circle-fill"></i>
+                        <div>
+                            <h4>¡REVISE ATENTAMENTE!</h4>
+                            <p>Si se ingresan datos falsos, no habrá devolución de dinero. Verifique su información antes de confirmar.</p>
+                            <p>Gracias por su comprensión. ALEPI</p>
+                        </div>
+                    </div>
+
+                    {/* Resumen de datos */}
+                    <div className="confirmation-card">
+                        <div className="confirmation-sections">
+                            {/* Datos Personales */}
+                            <div className="confirmation-section">
+                                <h5><i className="bi bi-person-badge"></i> Datos Personales</h5>
+                                <div className="data-grid">
+                                    <div className="data-item">
+                                        <span className="data-label">Nombre completo:</span>
+                                        <span className="data-value">{datos.nombre || 'No proporcionado'} {datos.apellidoPaterno || ''} {datos.apellidoMaterno || ''}</span>
+                                    </div>
+                                    <div className="data-item">
+                                        <span className="data-label">Fecha de nacimiento:</span>
+                                        <span className="data-value">{datos.fechaNacimiento || 'No proporcionado'}</span>
+                                    </div>
+                                    <div className="data-item">
+                                        <span className="data-label">Género:</span>
+                                        <span className="data-value">{datos.genero || 'No proporcionado'}</span>
+                                    </div>
+                                    <div className="data-item">
+                                        <span className="data-label">Teléfono:</span>
+                                        <span className="data-value">{datos.codigoArea ? `(${datos.codigoArea}) ` : ''}{datos.telefono || 'No proporcionado'}</span>
+                                    </div>
+                                    <div className="data-item full-width">
+                                        <span className="data-label">Dirección:</span>
+                                        <span className="data-value">
+                                            {datos.calle || 'No proporcionado'} {datos.numero || ''} {datos.interior ? `Int. ${datos.interior}` : ''}, 
+                                            CP: {datos.codigoPostal || 'N/A'}, {datos.alcaldia || 'N/A'}, {datos.estado || 'N/A'}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Datos Profesionales */}
+                            <div className="confirmation-section">
+                                <h5><i className="bi bi-mortarboard"></i> Datos Profesionales</h5>
+                                <div className="data-grid">
+                                    <div className="data-item">
+                                        <span className="data-label">Universidad:</span>
+                                        <span className="data-value">{datos.universidad || 'No proporcionado'}</span>
+                                    </div>
+                                    <div className="data-item">
+                                        <span className="data-label">Licenciatura:</span>
+                                        <span className="data-value">{datos.licenciatura || 'No proporcionado'}</span>
+                                    </div>
+                                    <div className="data-item">
+                                        <span className="data-label">Cédula profesional:</span>
+                                        <span className="data-value">{datos.cedulaProfesional || 'No proporcionado'}</span>
+                                    </div>
+                                    <div className="data-item">
+                                        <span className="data-label">Especialidad:</span>
+                                        <span className="data-value">{datos.especialidades || 'No proporcionado'}</span>
+                                    </div>
+                                    <div className="data-item full-width">
+                                        <span className="data-label">Certificaciones:</span>
+                                        <span className="data-value">{datos.certificaciones || 'No proporcionado'}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Datos Laborales */}
+                            <div className="confirmation-section">
+                                <h5><i className="bi bi-briefcase"></i> Datos Laborales</h5>
+                                <div className="data-grid">
+                                    <div className="data-item full-width">
+                                        <span className="data-label">Experiencia laboral:</span>
+                                        <span className="data-value">{datos.experienciaLaboral || 'No proporcionado'}</span>
+                                    </div>
+                                    <div className="data-item">
+                                        <span className="data-label">Monto de asesoría:</span>
+                                        <span className="data-value price">{datos.montoAsesoria ? `$${datos.montoAsesoria} MXN` : 'No proporcionado'}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Idiomas */}
+                            <div className="confirmation-section">
+                                <h5><i className="bi bi-translate"></i> Idiomas</h5>
+                                <div className="data-grid">
+                                    <div className="data-item full-width">
+                                        <span className="data-label">Idiomas que habla:</span>
+                                        <span className="data-value">
+                                            {datos.idiomas && datos.idiomas.length > 0 ? (
+                                                <span className="languages-list">
+                                                    {datos.idiomas.filter(idioma => idioma !== "Otros").join(', ')}
+                                                    {datos.idiomas.includes("Otros") && datos.otrosIdiomas && `, ${datos.otrosIdiomas}`}
+                                                </span>
+                                            ) : (
+                                                'No se seleccionaron idiomas'
+                                            )}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Datos de Contacto */}
+                            <div className="confirmation-section">
+                                <h5><i className="bi bi-chat-dots"></i> Datos de Contacto</h5>
+                                <div className="data-grid">
+                                    <div className="data-item">
+                                        <span className="data-label">Correo electrónico:</span>
+                                        <span className="data-value">{datos.correoContacto || 'No proporcionado'}</span>
+                                    </div>
+                                    <div className="data-item">
+                                        <span className="data-label">WhatsApp:</span>
+                                        <span className="data-value">{datos.whatsapp || 'No proporcionado'}</span>
+                                    </div>
+                                    <div className="data-item">
+                                        <span className="data-label">LinkedIn:</span>
+                                        <span className="data-value link">{datos.linkedin || 'No proporcionado'}</span>
+                                    </div>
+                                    <div className="data-item">
+                                        <span className="data-label">Facebook:</span>
+                                        <span className="data-value link">{datos.facebook || 'No proporcionado'}</span>
+                                    </div>
+                                    <div className="data-item">
+                                        <span className="data-label">Instagram:</span>
+                                        <span className="data-value link">{datos.instagram || 'No proporcionado'}</span>
+                                    </div>
+                                    <div className="data-item">
+                                        <span className="data-label">X (Twitter):</span>
+                                        <span className="data-value link">{datos.x || 'No proporcionado'}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="confirmation-actions">
+                            <div className="terms-agreement">
+                                <div className="form-check">
+                                    <input type="checkbox" className="form-check-input" id="termsAgreement" required />
+                                    <label className="form-check-label" htmlFor="termsAgreement">
+                                        He revisado y confirmo que toda la información proporcionada es verídica y acepto los 
+                                        <a href="/terminos" target="_blank"> términos y condiciones</a> y el 
+                                        <a href="/privacidad" target="_blank"> aviso de privacidad</a>.
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div className="button-container-dual">
+                                <button
+                                    type="button"
+                                    onClick={prevStep}
+                                    disabled={isSubmitting}
+                                    className="btn-secondary"
+                                >
+                                    <i className="bi bi-arrow-left"></i>
+                                    <span>Volver a editar</span>
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={handleSubmit}
+                                    disabled={isSubmitting}
+                                    className="btn-success"
+                                >
+                                    {isSubmitting ? (
+                                        <>
+                                            <span className="spinner"></span>
+                                            <span>Procesando...</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <i className="bi bi-check-circle"></i>
+                                            <span>Confirmar y Finalizar</span>
+                                        </>
+                                    )}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Footer interno */}
+                    <div className="login-link">
+                        <i className="bi bi-shield-lock"></i>
+                        Sus datos están protegidos y serán utilizados únicamente para fines de contacto
                     </div>
                 </div>
             </div>
-
-            <footer className="footer  py-5">
-                {/* Footer */}
-                <div className="container">
-                    {/* Resto del contenido del footer */}
-                </div>
-            </footer>
-        </>
+        </div>
     );
 };
 

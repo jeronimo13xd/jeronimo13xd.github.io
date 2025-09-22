@@ -1,4 +1,3 @@
-// SUSCRIPCION (Padre)
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Paso0 from '../Components/Paso0';
@@ -12,13 +11,15 @@ import axios from 'axios';
 const Suscripcion = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
   /* ───── estado global de los campos ───── */
   const [datos, setDatos] = useState({
     correo: '',
     contrasena: '',
     nombre: '',
-    idUsuario: '',               // se llenará tras Paso0
+    idUsuario: '',
     apellidoPaterno: '',
     apellidoMaterno: '',
     dia: '1',
@@ -26,8 +27,8 @@ const Suscripcion = () => {
     ano: '2000',
     genero: '',
     especialidades: '',
-    profesion: '',               // ID numérico en string
-    idiomas: [],                 // array
+    profesion: '',
+    idiomas: [],
     otrosIdiomas: '',
     cedulaProfesional: '',
     universidad: '',
@@ -60,9 +61,9 @@ const Suscripcion = () => {
   /* ───── Paso 0: registra usuario y guarda idUsuario ───── */
   const handleRegisterUsuario = async () => {
     const body = {
-      correo     : datos.correo.trim(),
-      contrasena : datos.contrasena,
-      nombre     : datos.nombre.trim(),
+      correo: datos.correo.trim(),
+      contrasena: datos.contrasena,
+      nombre: datos.nombre.trim(),
     };
 
     if (!body.correo || !body.contrasena || !body.nombre) {
@@ -70,53 +71,126 @@ const Suscripcion = () => {
       return;
     }
 
+    console.log('📤 Enviando datos:', body);
+
+    setIsSubmitting(true);
+    setError('');
+
     try {
-      const r = await axios.post('http://localhost/alepirea/RegistroUsuario.php', body);
-      if (r.data.status === 'success' && r.data.idUsuario) {
-        localStorage.setItem('idUsuario', r.data.idUsuario);
-        handleChange('idUsuario', r.data.idUsuario);
+      const response = await axios.post(
+        '/RegistroUsuario.php',
+        body,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          timeout: 10000,
+          withCredentials: false // ✅ IMPORTANTE: false cuando el servidor usa *
+        }
+      );
+
+      console.log('✅ Respuesta del servidor:', response.data);
+
+      if (response.data.status === 'success' && response.data.idUsuario) {
+        localStorage.setItem('idUsuario', response.data.idUsuario);
+        handleChange('idUsuario', response.data.idUsuario);
         nextStep();
       } else {
-        alert(r.data.message || 'Error al registrar usuario');
+        setError(response.data.message || 'Error al registrar usuario');
+        alert(response.data.message || 'Error al registrar usuario');
       }
+
     } catch (err) {
-      console.error(err);
-      alert('Error de red al registrar usuario');
+      console.error('❌ Error completo:', err);
+      
+      if (err.code === 'ECONNABORTED') {
+        setError('El servidor tardó demasiado en responder');
+        alert('Timeout: El servidor no respondió a tiempo');
+      } else if (err.response) {
+        // El servidor respondió con un error
+        console.log('📊 Respuesta de error:', err.response.data);
+        setError(err.response.data.message || `Error ${err.response.status}`);
+        alert(err.response.data.message || `Error del servidor: ${err.response.status}`);
+      } else if (err.request) {
+        // No se recibió respuesta
+        console.log('🔌 Sin respuesta del servidor');
+        setError('Error de red: No se pudo conectar al servidor');
+        alert('Error de red: Verifica que XAMPP esté ejecutándose');
+      } else {
+        // Error en la configuración
+        setError('Error inesperado: ' + err.message);
+        alert('Error inesperado: ' + err.message);
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   /* ───── Paso 5: registro profesional ───── */
-  const handleSubmitProfesional = async () => {
-    /* validación mínima */
-    if (!datos.idUsuario) { alert('Falta idUsuario'); return; }
-    if (!datos.profesion)  { alert('Falta profesión'); return; }
-    if (!Array.isArray(datos.idiomas) || datos.idiomas.length === 0) {
-      alert('Selecciona al menos un idioma'); return;
-    }
+const handleSubmitProfesional = async () => {
+  if (!datos.idUsuario) {
+    alert('Falta idUsuario. Vuelve al paso 1.');
+    return;
+  }
 
-    const carga = {
-      ...datos,
-      idUsuario     : Number(datos.idUsuario),
-      profesion     : Number(datos.profesion),
-      especialidades: Number(datos.especialidades || 0),
-      montoAsesoria : Number(datos.montoAsesoria || 0),
-      fechaNacimiento: `${datos.ano}-${datos.mes}-${datos.dia}`
-    };
+  setIsSubmitting(true);
+  setError('');
 
-    try {
-      console.log('Enviando datos:', carga);
-      const r = await axios.post('http://localhost/alepirea/RegistroProfesional.php', carga);
-      if (r.data.status === 'success') {
-        alert('Registro completado exitosamente');
-        navigate('/perfil');
-      } else {
-        alert(`Error: ${r.data.message}`);
-      }
-    } catch (err) {
-      console.error(err);
-      alert('Error de red al registrar profesional');
-    }
+  const carga = {
+    ...datos,
+    idUsuario: Number(datos.idUsuario),
+    profesion: Number(datos.profesion || 0),
+    especialidades: Number(datos.especialidades || 0),
+    montoAsesoria: Number(datos.montoAsesoria || 0),
+    fechaNacimiento: `${datos.ano}-${datos.mes}-${datos.dia}`
   };
+
+  try {
+    console.log('📤 Enviando datos profesionales:', carga);
+    
+    // ✅ CORREGIDO: URL sin duplicar alepirea
+    const response = await axios.post(
+      '/RegistroProfesional.php',
+      carga,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        timeout: 10000,
+        withCredentials: false
+      }
+    );
+
+    console.log('✅ Respuesta registro profesional:', response.data);
+
+    if (response.data.status === 'success') {
+      alert('¡Registro completado exitosamente!');
+      navigate('/perfil');
+    } else {
+      setError(response.data.message);
+      alert('Error: ' + response.data.message);
+    }
+
+  } catch (err) {
+    console.error('❌ Error registro profesional:', err);
+    
+    if (err.code === 'ECONNABORTED') {
+      setError('El servidor tardó demasiado en responder');
+      alert('Timeout: El servidor no respondió a tiempo');
+    } else if (err.response) {
+      setError(err.response.data.message || `Error ${err.response.status}`);
+      alert('Error del servidor: ' + (err.response.data.message || `Error ${err.response.status}`));
+    } else if (err.request) {
+      setError('No se pudo conectar al servidor');
+      alert('Error de conexión: Verifica que XAMPP esté ejecutándose');
+    } else {
+      setError('Error inesperado: ' + err.message);
+      alert('Error inesperado: ' + err.message);
+    }
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   /* ───── render según paso ───── */
   switch (step) {
@@ -126,6 +200,8 @@ const Suscripcion = () => {
           registrarUsuario={handleRegisterUsuario}
           handleChange={handleChange}
           datos={datos}
+          isSubmitting={isSubmitting}
+          error={error}
         />
       );
     case 1:
@@ -170,6 +246,8 @@ const Suscripcion = () => {
           prevStep={prevStep}
           handleSubmit={handleSubmitProfesional}
           datos={datos}
+          isSubmitting={isSubmitting}
+          error={error}
         />
       );
     default:

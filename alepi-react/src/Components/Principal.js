@@ -1,62 +1,66 @@
-import React from "react";
-import "./Princpal.css";
-import defaultProfilePic from "../assets/UsuarioH.png"; // Imagen de perfil por defecto
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import './Princpal.css'; // Asegúrate de tener los estilos
 
-const professionals = [
-    { name: "Nombre 1", specialty: "Perito", image: defaultProfilePic },
-    { name: "Nombre 2", specialty: "Abogado", image: defaultProfilePic },
-    { name: "Nombre 3", specialty: "Psicólogo", image: defaultProfilePic },
-    { name: "Nombre 4", specialty: "Especialidad", image: defaultProfilePic }
-];
+function Principal() {
+  const [profesionales, setProfesionales] = useState([]);
 
-const Principal = () => {
-    return (
-        <div className="principal-container">
-            {/* Sección de búsqueda */}
-            <div className="principal-search">
-                <button className="ps-option">Perito</button>
-                <button className="ps-option">Abogado</button>
-                <button className="ps-option">Psicólogo</button>
-                <button className="ps-search-btn">Buscar</button>
-            </div>
+  useEffect(() => {
+    axios.get('http://localhost/alepirea/getProfesionales.php')
+      .then(res => setProfesionales(res.data))
+      .catch(err => console.error('Error al obtener profesionales:', err));
+  }, []);
 
-            {/* Contenido central en dos columnas */}
-            <div className="principal-content">
-                {/* Columna izquierda: Lista de profesionales */}
-                <div className="ps-professionals">
-                    <h2 className="ps-title">Profesionales</h2>
-                    <div className="ps-list">
-                        {professionals.map((prof, index) => (
-                            <div className="ps-card" key={index}>
-                                <img src={prof.image} alt={`Foto de ${prof.name}`} className="ps-img" />
-                                <div className="ps-info">
-                                    <h3>{prof.name}</h3>
-                                    <p>{prof.specialty}</p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                {/* Columna derecha: Artículo y Video */}
-                <div className="ps-articles-videos">
-                    <div className="ps-article">
-                        <h2 className="ps-title">Artículo</h2>
-                        <p className="ps-author">Autor: Nombre del Autor</p>
-                        <p className="ps-excerpt">
-                            Este es un extracto del artículo. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        </p>
-                    </div>
-                    <div className="ps-video">
-                        <h2 className="ps-title">Video</h2>
-                        <div className="ps-video-placeholder">
-                            VIDEO
-                        </div>
-                    </div>
-                </div>
-            </div>
+  return (
+    <div className="principal-container">
+      <div className="principal-top">
+        <div className="ps-search-block">
+          <button className="ps-option">Perito</button>
+          <button className="ps-option">Abogado</button>
+          <button className="ps-option">Psicologo</button>
+          <input type="text" className="ps-input" placeholder="Nombre o palabra clave" />
+          <button className="ps-search-btn">Buscar</button>
         </div>
-    );
-};
+
+        <div className="ps-professionals">
+          <h2 className="ps-title">Profesionales</h2>
+          <div className="ps-list">
+            {profesionales.length > 0 ? (
+              profesionales.map((pro, index) => (
+                <div className="ps-card" key={index}>
+                  <img
+                    className="ps-img"
+                    src={pro.ImagenURL || "http://localhost/alepirea/default.jpg"}
+                    alt={pro.Nombre}
+                  />
+                  <div className="ps-info">
+                    <h3>{pro.Nombre}</h3>
+                    <p>Especialidad: {pro.Especialidad || 'Sin definir'}</p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="ps-empty">No hay profesionales disponibles.</div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="principal-bottom">
+        <div className="ps-article">
+          <h3>Título</h3>
+          <p className="ps-author">Nombre del Autor</p>
+          <p className="ps-excerpt">
+            Este es un extracto del artículo. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+          </p>
+        </div>
+        <div className="ps-video">
+          <h3>Video</h3>
+          <div className="ps-video-placeholder">VIDEO</div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default Principal;
