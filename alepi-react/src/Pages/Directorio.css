@@ -1,258 +1,435 @@
-/* Estilos generales */
+/* Directorio.css - Diseño Mejorado */
+:root {
+    --primary-color: #003366;
+    --primary-dark: #002244;
+    --primary-light: #004488;
+    --secondary-color: #0055A4;
+    --secondary-light: #0066CC;
+    --accent-color: #FFD33D;
+    --accent-dark: #E6B800;
+    --light-color: #ffffff;
+    --light-gray: #f8f9fa;
+    --dark-color: #001f3f;
+    --text-light: #f0f0f0;
+    --text-lighter: #e0e0e0;
+    --text-dark: #2d3748;
+    --text-darker: #1a202c;
+    --border-color: #e2e8f0;
+    --border-radius: 12px;
+    --border-radius-lg: 16px;
+    --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --box-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.espaciado-footer {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
+    min-height: 100vh;
+    padding: 2rem 0;
+}
+
 .directorio-container {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    padding: 20px;
-    background-color: #002147;
-    /* Azul oscuro de fondo */
-    border-radius: 10px;
-    max-width: 1000px;
-    margin: auto;
-    width: 90%;
-}
-
-/* Tarjeta de profesional */
-.directorio-card {
-    display: flex;
-    align-items: center;
-    background-color: #003366;
-    /* Azul más claro para las tarjetas */
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-    width: 100%;
-    max-width: 900px;
+    max-width: 1200px;
     margin: 0 auto;
-    color: white;
-    font-family: 'Arial', sans-serif;
-    border: 2px solid #0055A4;
-    /* Borde azul más claro */
-    transition: transform 0.2s ease-in-out;
+    padding: 0 2rem;
 }
 
-/* Efecto hover */
-.directorio-card:hover {
-    transform: scale(1.02);
-}
-
-/* Imagen del profesional */
-.directorio-img {
-    width: 100px;
-    height: 100px;
-    border-radius: 8px;
-    object-fit: cover;
-    margin-right: 15px;
-    border: 2px solid white;
-    transition: transform 0.3s ease-in-out;
-}
-
-/* Efecto hover en la imagen */
-.directorio-img:hover {
-    transform: scale(1.1);
-}
-
-/* Contenedor de información */
-.directorio-info {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-.directorio-name {
-    font-size: 20px;
-    font-weight: bold;
-    text-transform: uppercase;
-    margin-bottom: 3px;
-}
-
-.directorio-specialty {
-    font-size: 16px;
-    font-weight: bold;
-    text-transform: uppercase;
-    color: #f0f0f0;
-}
-
-/* Botones de contacto */
-.directorio-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-right: 15px;
-}
-
-.directorio-buttons button {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 8px;
-    background-color: white;
-    color: black;
-    border: 1px solid #ccc;
-    padding: 10px 14px;
-    border-radius: 6px;
-    font-size: 14px;
-    cursor: pointer;
-    width: 220px;
-    font-weight: bold;
-    box-shadow: inset 0px 0px 3px rgba(0, 0, 0, 0.2);
-    transition: background-color 0.3s ease-in-out;
-}
-
-/* Efecto hover en botones */
-.directorio-buttons button:hover {
-    background-color: #0055A4;
-    color: white;
-}
-
-.directorio-buttons button img {
-    width: 18px;
-    height: 18px;
-}
-
-/* Rating - estrellas */
-.directorio-rating {
-    display: flex;
-    align-items: center;
-    font-size: 22px;
-}
-
-.directorio-star {
-    color: gray;
-}
-
-.directorio-star.filled {
-    color: gold;
-}
-
-/* ─── RESPONSIVIDAD ─── */
-
-/* Para pantallas medianas (tablets) */
-@media (max-width: 768px) {
-    .directorio-card {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        padding: 20px;
-    }
-
-    .directorio-img {
-        margin-right: 0;
-        margin-bottom: 10px;
-        width: 90px;
-        height: 90px;
-    }
-
-    .directorio-buttons {
-        flex-direction: row;
-        justify-content: center;
-        flex-wrap: wrap;
-        margin-right: 0;
-    }
-
-    .directorio-buttons button {
-        width: auto;
-        font-size: 12px;
-        padding: 8px;
-    }
-
-    .directorio-rating {
-        font-size: 20px;
-    }
-}
-
-/* Para pantallas pequeñas (móviles) */
-@media (max-width: 480px) {
-    .directorio-container {
-        padding: 10px;
-    }
-
-    .directorio-card {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        padding: 15px;
-    }
-
-    .directorio-img {
-        width: 80px;
-        height: 80px;
-        margin-bottom: 10px;
-    }
-
-    .directorio-name {
-        font-size: 18px;
-    }
-
-    .directorio-specialty {
-        font-size: 14px;
-    }
-
-    .directorio-buttons {
-        flex-direction: column;
-        gap: 5px;
-    }
-
-    .directorio-buttons button {
-        width: 180px;
-        font-size: 12px;
-    }
-
-    .directorio-rating {
-        font-size: 18px;
-    }
-}
-
-.directorio-buscador {
-    max-width: 1000px;
-    width: 90%;
-    margin: 30px auto 10px auto;
+/* Header */
+.directorio-header {
     text-align: center;
-    background-color: #003366;
+    margin-bottom: 3rem;
+    color: var(--light-color);
 }
 
-.directorio-buscador input {
-    width: 100%;
-    padding: 12px 16px;
-    border-radius: 8px;
-    border: none;
-    font-size: 16px;
-    outline: none;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+.directorio-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, var(--light-color) 0%, var(--accent-color) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
+.directorio-header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* Filtros Mejorados */
 .buscador-container {
+    background: var(--light-color);
+    border-radius: var(--border-radius-lg);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--box-shadow-lg);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    align-items: end;
+}
+
+.filter-group {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 12px;
-    margin-bottom: 20px;
-    background-color: #003366;
-    padding: 15px;
-    border-radius: 10px;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.filter-group label {
+    font-weight: 600;
+    color: var(--text-darker);
+    font-size: 0.9rem;
 }
 
 .buscador-container select,
 .buscador-container input {
-    padding: 10px;
-    border-radius: 6px;
-    border: none;
-    font-size: 14px;
-    width: 200px;
+    padding: 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    background: var(--light-color);
+    transition: all 0.3s ease;
+    width: 100%;
 }
 
-.buscador-container button {
-    background-color: #FFD700;
-    color: black;
-    font-weight: bold;
-    border: none;
-    border-radius: 6px;
-    padding: 10px 16px;
+.buscador-container select:focus,
+.buscador-container input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(255, 211, 61, 0.1);
+}
+
+.filter-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.btn-clear {
+    background: transparent;
+    color: var(--secondary-color);
+    border: 2px solid var(--secondary-color);
+    border-radius: var(--border-radius);
+    padding: 1rem 1.5rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
 }
 
-.buscador-container button:hover {
-    background-color: #e6c200;
+.btn-clear:hover {
+    background: var(--secondary-color);
+    color: var(--light-color);
+    transform: translateY(-2px);
+}
+
+.results-count {
+    background: var(--accent-color);
+    color: var(--text-darker);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+/* Grid de Profesionales */
+.professionals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 1.5rem;
+}
+
+/* Tarjeta Mejorada */
+.directorio-card {
+    background: var(--light-color);
+    border-radius: var(--border-radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--box-shadow);
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.directorio-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--box-shadow-lg);
+    border-color: var(--accent-color);
+}
+
+.card-header {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.professional-avatar {
+    position: relative;
+}
+
+.directorio-img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--accent-color);
+}
+
+.verified-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: var(--accent-color);
+    color: var(--text-darker);
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: bold;
+    border: 2px solid var(--light-color);
+}
+
+.professional-main-info {
+    flex: 1;
+}
+
+.name-section {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.directorio-name {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-darker);
+    margin: 0;
+}
+
+.professional-category {
+    background: var(--secondary-color);
+    color: var(--light-color);
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.directorio-specialty {
+    color: var(--secondary-color);
+    font-weight: 600;
+    margin: 0 0 0.75rem 0;
+    font-size: 1rem;
+}
+
+.professional-meta {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.9rem;
+}
+
+.experience, .price {
+    color: var(--text-dark);
+    font-weight: 500;
+}
+
+/* Card Content */
+.card-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.directorio-rating {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.stars {
+    display: flex;
+    gap: 2px;
+}
+
+.star {
+    color: var(--border-color);
+    font-size: 1.2rem;
+}
+
+.star.filled {
+    color: var(--accent-color);
+}
+
+.rating-text {
+    font-weight: 600;
+    color: var(--text-dark);
+    font-size: 0.9rem;
+}
+
+/* Botones Mejorados */
+.directorio-buttons {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.btn-contact {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius);
+    background: var(--light-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.btn-contact:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--box-shadow);
+}
+
+.btn-contact.email:hover {
+    border-color: #EA4335;
+    background: #fce8e6;
+}
+
+.btn-contact.whatsapp:hover {
+    border-color: #25D366;
+    background: #e6f4ea;
+}
+
+.btn-contact img {
+    width: 16px;
+    height: 16px;
+}
+
+.btn-profile {
+    background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-dark) 100%);
+    color: var(--text-darker);
+    border: none;
+    border-radius: var(--border-radius);
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-profile:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--box-shadow);
+}
+
+/* No Results */
+.no-results {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem;
+    background: var(--light-color);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--box-shadow);
+}
+
+.no-results-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.no-results h3 {
+    color: var(--text-darker);
+    margin-bottom: 0.5rem;
+}
+
+.no-results p {
+    color: var(--text-dark);
+    opacity: 0.8;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .directorio-container {
+        padding: 0 1rem;
+    }
+    
+    .directorio-header h1 {
+        font-size: 2rem;
+    }
+    
+    .buscador-container {
+        grid-template-columns: 1fr;
+        padding: 1.5rem;
+    }
+    
+    .professionals-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .card-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .name-section {
+        justify-content: center;
+    }
+    
+    .card-content {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .directorio-buttons {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 480px) {
+    .directorio-header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .directorio-header p {
+        font-size: 1rem;
+    }
+    
+    .buscador-container {
+        padding: 1rem;
+    }
+    
+    .directorio-card {
+        padding: 1rem;
+    }
+    
+    .directorio-img {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .directorio-name {
+        font-size: 1.1rem;
+    }
+    
+    .directorio-buttons {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .btn-contact, .btn-profile {
+        width: 100%;
+        justify-content: center;
+    }
 }
