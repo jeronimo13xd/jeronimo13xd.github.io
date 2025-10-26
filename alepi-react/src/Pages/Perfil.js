@@ -1,5 +1,4 @@
-// src/Pages/Perfil.jsx
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./PerfilUsuario.css";
@@ -13,7 +12,6 @@ import emailIcon from "../assets/Mail.svg";
 
 import { AuthContext } from "../Components/AuthContext";
 
-/* ------------- CONFIG AXIOS ------------- */
 axios.defaults.baseURL = "http://localhost/alepirea/";
 axios.defaults.withCredentials = true;
 
@@ -23,32 +21,172 @@ export default function Perfil() {
   const [perfil, setPerfil] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("informacion");
+  const [imageVersion, setImageVersion] = useState(Date.now());
+  const fileInputRef = useRef(null);
 
-  /* ---------- Cargar perfil al montar ---------- */
-  useEffect(() => {
-    const id = user?.ID_Usuario || localStorage.getItem("idUsuario");
+  // ---------------- Obtener ID del usuario ----------------
+  const getUserId = () => {
+    // Verificar todas las posibles fuentes del ID
+    const idFromContext = user?.ID_Usuario;
+    const idFromLocalStorage = localStorage.getItem("idUsuario");
+    const idFromSessionStorage = sessionStorage.getItem("idUsuario");
+    
+    console.log("🔍 Buscando ID del usuario:");
+    console.log("   - Contexto:", idFromContext);
+    console.log("   - LocalStorage:", idFromLocalStorage);
+    console.log("   - SessionStorage:", idFromSessionStorage);
+    
+    const finalId = idFromContext || idFromLocalStorage || idFromSessionStorage;
+    
+    if (!finalId) {
+      console.error("❌ No se pudo encontrar el ID del usuario en ninguna fuente");
+      return null;
+    }
+    
+    console.log("✅ ID encontrado:", finalId);
+    return finalId;
+  };
+
+  // ---------------- Cargar perfil ----------------
+  const cargarPerfil = async () => {
+    const id = getUserId();
     if (!id) {
       alert("No se encontró un usuario válido. Inicia sesión.");
       navigate("/");
       return;
     }
 
-    axios.get("GetUsuario.php?id=" + id)
-      .then(r => {
-        if (r.data.status === "success") {
-          setPerfil(r.data.data);
-        } else {
-          alert(r.data.message || "No se encontraron datos.");
-          navigate("/");
-        }
-      })
-      .catch(err => {
-        console.error(err);
-        alert("Error al cargar el perfil.");
+    try {
+      const response = await axios.get(`GetUsuario.php?id=${id}`);
+      if (response.data.status === "success") {
+        console.log("✅ Perfil cargado:", response.data.data);
+        setPerfil(response.data.data);
+      } else {
+        alert(response.data.message || "No se encontraron datos.");
         navigate("/");
-      })
-      .finally(() => setLoading(false));
+      }
+    } catch (err) {
+      console.error("❌ Error cargando perfil:", err);
+      alert("Error al cargar el perfil.");
+      navigate("/");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    cargarPerfil();
   }, [user, navigate]);
+
+  // --------------- Subir nueva imagen ----------------
+  const handleImageClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Obtener ID ANTES de cualquier operación
+    const id = getUserId();
+    if (!id) {
+      alert("No se pudo identificar al usuario. Por favor, inicia sesión nuevamente.");
+      return;
+    }
+
+    console.log("📤 Preparando subida de imagen para usuario ID:", id);
+
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      alert('Por favor, selecciona una imagen válida (JPEG, PNG, GIF, WebP).');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert('La imagen es demasiado grande. El tamaño máximo permitido es 5MB.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("idUsuario", id);
+    formData.append("imagen", file);
+
+    // Verificar que el FormData tenga los datos correctos
+    console.log("📦 FormData contenido:");
+    for (let [key, value] of formData.entries()) {
+      console.log(`   ${key}:`, value);
+    }
+
+    try {
+      console.log("🚀 Enviando imagen al servidor...");
+      const response = await axios.post("UploadPerfil.php", formData, {
+        headers: { 
+          "Content-Type": "multipart/form-data"
+        }
+      });
+
+      console.log("📥 Respuesta del servidor:", response.data);
+
+      if (response.data.status === "success") {
+        // Forzar recarga completa
+        setImageVersion(Date.now());
+        
+        // Recargar el perfil después de 1 segundo
+        setTimeout(() => {
+          cargarPerfil();
+        }, 1000);
+        
+        alert("✅ Imagen de perfil actualizada correctamente.");
+        
+      } else {
+        alert("❌ " + (response.data.message || "Error al subir la imagen."));
+      }
+
+    } catch (err) {
+      console.error('❌ Error completo:', err);
+      if (err.response) {
+        console.error('❌ Respuesta de error del servidor:', err.response.data);
+        console.error('❌ Status code:', err.response.status);
+        alert(`❌ Error del servidor: ${err.response.data.message || 'Error desconocido'}`);
+      } else if (err.request) {
+        console.error('❌ No hubo respuesta del servidor');
+        alert("❌ No se pudo conectar con el servidor. Verifica tu conexión.");
+      } else {
+        console.error('❌ Error en la configuración de la petición:', err.message);
+        alert("❌ Error inesperado: " + err.message);
+      }
+    }
+  };
+
+  // --------------- Eliminar imagen ----------------
+  const handleDeleteImage = async () => {
+    if (!window.confirm("¿Estás seguro de que quieres eliminar tu imagen de perfil?")) {
+      return;
+    }
+
+    const id = getUserId();
+    if (!id) {
+      alert("No se pudo identificar al usuario.");
+      return;
+    }
+
+    try {
+      const response = await axios.post("DeleteImagenPerfil.php", { idUsuario: id });
+      
+      if (response.data.status === "success") {
+        setImageVersion(Date.now());
+        setTimeout(() => {
+          cargarPerfil();
+        }, 500);
+        alert("✅ Imagen de perfil eliminada correctamente.");
+      } else {
+        alert("❌ " + response.data.message);
+      }
+    } catch (err) {
+      console.error('❌ Error eliminando imagen:', err);
+      alert("❌ Error al eliminar la imagen.");
+    }
+  };
 
   if (loading) {
     return (
@@ -61,9 +199,27 @@ export default function Perfil() {
 
   if (!perfil) return null;
 
-  /* ---------- Helpers ---------- */
-  const imgURL = perfil.imagenPerfil || "/default-avatar.png";
+  // ---------------- URL DE IMAGEN CORREGIDA ----------------
+  const getImageUrl = () => {
+    // Si no hay imagen de perfil, usar icono por defecto
+    if (!perfil.imagenPerfil || perfil.imagenPerfil === "null" || perfil.imagenPerfil === null) {
+      return `https://via.placeholder.com/150x150/6c757d/ffffff?text=👤&v=${imageVersion}`;
+    }
+    
+    // Si ya es una URL completa
+    if (perfil.imagenPerfil.startsWith("http")) {
+      return `${perfil.imagenPerfil}?v=${imageVersion}`;
+    }
+    
+    // Si es una ruta relativa - construir URL completa
+    return `http://localhost/alepirea/${perfil.imagenPerfil}?v=${imageVersion}`;
+  };
+
+  const imgURL = getImageUrl();
+  const hasImage = perfil.imagenPerfil && perfil.imagenPerfil !== "null" && perfil.imagenPerfil !== null;
+
   const fullName = `${perfil.nombreVisible || perfil.nombreCuenta || ""} ${perfil.apellidoP || ""} ${perfil.apellidoM || ""}`.trim() || "Sin nombre";
+
   const idiomas = Array.isArray(perfil.Idiomas) ? perfil.Idiomas.join(", ") : (perfil.Idiomas || "No especificados");
   const certific = Array.isArray(perfil.Certificaciones) ? perfil.Certificaciones.join(", ") : (perfil.Certificaciones || "No especificadas");
 
@@ -72,98 +228,92 @@ export default function Perfil() {
     { nombre: "María González", fecha: "15/06/24", comentario: "Excelente trabajo, cumplió con todas las expectativas.", estrellas: 4 },
     { nombre: "Carlos López", fecha: "28/05/24", comentario: "Muy recomendable, gran experiencia de trabajo.", estrellas: 5 }
   ];
-
   const promedioEstrellas = valoraciones.reduce((acc, curr) => acc + curr.estrellas, 0) / valoraciones.length;
 
-  // Función para manejar el contacto
   const handleContact = (type) => {
     if (type === 'whatsapp') {
       const phone = perfil.telefono?.replace(/\D/g, '');
-      if (phone) {
-        window.open(`https://wa.me/${phone}`, '_blank');
-      } else {
-        alert('Número de teléfono no disponible');
-      }
+      if (phone) window.open(`https://wa.me/${phone}`, '_blank');
+      else alert('Número de teléfono no disponible');
     } else if (type === 'email') {
       const email = perfil.correo;
-      if (email) {
-        window.location.href = `mailto:${email}`;
-      } else {
-        alert('Correo electrónico no disponible');
-      }
+      if (email) window.location.href = `mailto:${email}`;
+      else alert('Correo electrónico no disponible');
     }
   };
 
   return (
     <div className="perfil-pro-container">
-      {/* Header del perfil */}
       <div className="perfil-pro-header">
         <div className="perfil-pro-avatar-section">
           <div className="perfil-pro-avatar-container">
-            <img src={imgURL} alt={fullName} className="perfil-pro-avatar" onError={(e) => {
-              e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjAiIGhlaWdodD0iMTIwIiByeD0iNjAiIGZpbGw9IiNlNmYyZmYiLz4KPHBhdGggZD0iTTQ1IDUwQzQ1IDUzLjg2NiA0OC4xMzQgNTcgNTIgNTdDNTUuODY2IDU3IDU5IDUzLjg2NiA1OSA1MEM1OSA0Ni4xMzQgNTUuODY2IDQzIDUyIDQzQzQ4LjEzNCA0MyA0NSA0Ni4xMzQgNDUgNTBaTTcyIDUwQzcyIDUzLjg2NiA3NS4xMzQgNTcgNzkgNTdDODIuODY2IDU3IDg2IDUzLjg2NiA4NiA1MEM4NiA0Ni4xMzQgODIuODY2IDQzIDc5IDQzQzc1LjEzNCA0MyA3MiA0Ni4xMzQgNzIgNTBaTTMwIDg0QzMwIDc0IDM4IDY2IDQ4IDY2SDcyQzgyIDY2IDkwIDc0IDkwIDg0Vjg3SDMwVjg0WiIgZmlsbD0iIzAwNWM5OSIvPgo8L3N2Zz4K';
-            }} />
-            <div className="perfil-pro-status"></div>
+            <div className="perfil-pro-avatar-wrapper" onClick={handleImageClick} style={{ cursor: "pointer" }}>
+              <img 
+                src={imgURL} 
+                alt={fullName} 
+                className="perfil-pro-avatar" 
+                onError={(e) => { 
+                  console.error("❌ Error cargando imagen:", imgURL);
+                  e.target.src = `https://via.placeholder.com/150x150/dc3545/ffffff?text=❌&v=${imageVersion}`;
+                }} 
+                onLoad={() => console.log("✅ Imagen cargada exitosamente:", imgURL)}
+              />
+              <div className="perfil-pro-avatar-overlay">
+                <span>{hasImage ? "Cambiar foto" : "Subir foto"}</span>
+              </div>
+            </div>
+            <input type="file" ref={fileInputRef} style={{ display: "none" }} accept="image/*" onChange={handleImageChange} />
+            
+            {hasImage && (
+              <button className="btn-delete-image" onClick={handleDeleteImage} title="Eliminar imagen">
+                <i className="bi bi-trash"></i>
+              </button>
+            )}
           </div>
+          
           <div className="perfil-pro-info">
             <h1>{fullName}</h1>
             <p className="perfil-pro-profesion">{perfil.profesion || "Profesional"}</p>
             <div className="perfil-pro-rating">
               <div className="stars">
                 {[...Array(5)].map((_, i) => (
-                  <span key={i} className={i < Math.round(promedioEstrellas) ? "star filled" : "star"}>
-                    ★
-                  </span>
+                  <span key={i} className={i < Math.round(promedioEstrellas) ? "star filled" : "star"}>★</span>
                 ))}
               </div>
               <span className="rating-text">({valoraciones.length} valoraciones)</span>
             </div>
           </div>
         </div>
-        
+
         <div className="perfil-pro-actions">
           <button className="btn-pro-primary" onClick={() => handleContact('whatsapp')}>
-            <img src={whatsappIcon} alt="WhatsApp" />
-            Contactar
+            <img src={whatsappIcon} alt="WhatsApp" /> Contactar
           </button>
           <button className="btn-pro-secondary" onClick={() => handleContact('email')}>
-            <img src={emailIcon} alt="Email" />
-            Enviar mensaje
+            <img src={emailIcon} alt="Email" /> Enviar mensaje
           </button>
         </div>
       </div>
-
-      {/* Navegación por pestañas */}
+      {/* El resto de tu código permanece igual */}
       <div className="perfil-pro-tabs">
-        <button 
-          className={`tab-btn ${activeTab === "informacion" ? "active" : ""}`}
-          onClick={() => setActiveTab("informacion")}
-        >
+        <button className={`tab-btn ${activeTab === "informacion" ? "active" : ""}`} onClick={() => setActiveTab("informacion")}>
           <i className="bi bi-person-fill"></i>
           Información
         </button>
-        <button 
-          className={`tab-btn ${activeTab === "experiencia" ? "active" : ""}`}
-          onClick={() => setActiveTab("experiencia")}
-        >
+        <button className={`tab-btn ${activeTab === "experiencia" ? "active" : ""}`} onClick={() => setActiveTab("experiencia")}>
           <i className="bi bi-briefcase-fill"></i>
           Experiencia
         </button>
-        <button 
-          className={`tab-btn ${activeTab === "valoraciones" ? "active" : ""}`}
-          onClick={() => setActiveTab("valoraciones")}
-        >
+        <button className={`tab-btn ${activeTab === "valoraciones" ? "active" : ""}`} onClick={() => setActiveTab("valoraciones")}>
           <i className="bi bi-star-fill"></i>
           Valoraciones
         </button>
       </div>
 
-      {/* Contenido de las pestañas */}
       <div className="perfil-pro-content">
         {activeTab === "informacion" && (
           <div className="tab-content">
             <div className="info-grid">
-              {/* Información de contacto */}
               <div className="info-card">
                 <div className="card-header">
                   <i className="bi bi-telephone-fill"></i>
@@ -194,7 +344,6 @@ export default function Perfil() {
                 </div>
               </div>
 
-              {/* Especialidades */}
               <div className="info-card">
                 <div className="card-header">
                   <i className="bi bi-award-fill"></i>
@@ -202,14 +351,13 @@ export default function Perfil() {
                 </div>
                 <div className="card-body">
                   <div className="specialties">
-                    {(perfil.especialidad ? perfil.especialidad.split(',') : ['No especificadas']).map((especialidad, index) => (
+                    {(perfil.especialidad ? perfil.especialidad.split(",") : ["No especificadas"]).map((especialidad, index) => (
                       <span key={index} className="specialty-tag">{especialidad.trim()}</span>
                     ))}
                   </div>
                 </div>
               </div>
 
-              {/* Educación y Certificaciones */}
               <div className="info-card">
                 <div className="card-header">
                   <i className="bi bi-mortarboard-fill"></i>
@@ -231,7 +379,6 @@ export default function Perfil() {
                 </div>
               </div>
 
-              {/* Idiomas */}
               <div className="info-card">
                 <div className="card-header">
                   <i className="bi bi-translate"></i>
@@ -239,12 +386,12 @@ export default function Perfil() {
                 </div>
                 <div className="card-body">
                   <div className="languages">
-                    {idiomas !== "No especificados" ? idiomas.split(', ').map((idioma, index) => (
+                    {idiomas !== "No especificados" ? idiomas.split(", ").map((idioma, index) => (
                       <div key={index} className="language-item">
                         <span className="language-name">{idioma}</span>
                         <div className="language-level">
                           <div className="level-bar">
-                            <div className="level-fill" style={{width: `${Math.random() * 30 + 70}%`}}></div>
+                            <div className="level-fill" style={{ width: `${Math.random() * 30 + 70}%` }}></div>
                           </div>
                         </div>
                       </div>
@@ -346,7 +493,6 @@ export default function Perfil() {
         )}
       </div>
 
-      {/* Redes Sociales */}
       <div className="perfil-pro-social">
         <h3><i className="bi bi-share-fill"></i> Conecta conmigo</h3>
         <div className="social-links">

@@ -33,6 +33,7 @@ try {
         u.Correo,
         u.Nombre                   AS nombreCuenta,
         u.Estado,
+        u.imagenPerfil,            -- ¡ESTA LÍNEA ES LA QUE FALTA!
         pr.Nombre                  AS nombreVisible,
         pr.ApellidoP               AS apellidoP,
         pr.ApellidoM               AS apellidoM,
